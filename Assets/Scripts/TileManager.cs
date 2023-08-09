@@ -60,17 +60,25 @@ public class TileManager : MonoBehaviour
     }
 
 
-    [SerializeField] private GameObject prefab;
+    [SerializeField] private TileObject playerFighterPrefab;
+    [SerializeField] private TileObject treePrefab;
     private void RandomizeMap(float chance = 0.5f)
     {
+        //player
+        int playerX = Random.Range(0, tileCount[0] - 1);
+        int playerY = Random.Range(0, tileCount[1] - 1);
+        var newPlayerObject = TileObject.CreateTileObject(tiles[playerX, playerY].GetComponent<Tile>(), playerFighterPrefab.GetCharacterSO());
+        tiles[playerX, playerY].GetComponent<Tile>().TrySetObjectOnThisTile(newPlayerObject);
+
+        //trees
         for (int y = 0; y < tileCount[1]; y++)
         {
             for (int x = 0; x < tileCount[0]; x++)
             {
+                if (tiles[x, y].GetComponent<Tile>().HasObjectOnThisTile()) continue;
                 if(Random.Range(0f,1f) <= chance)
                 {
-                    var newObject = Instantiate(prefab, tiles[x, y].transform.position, Quaternion.identity, tiles[x, y].transform);
-                    var newTileObject = newObject.GetComponent<TileObject>();
+                    var newTileObject = TileObject.CreateTileObject(tiles[x, y].GetComponent<Tile>(), treePrefab.GetCharacterSO());
                     tiles[x, y].GetComponent<Tile>().TrySetObjectOnThisTile(newTileObject);
                 }
             }

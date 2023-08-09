@@ -41,6 +41,24 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         }
     }
 
+    #region ObjectOnThisTile
+
+    public bool HasObjectOnThisTile()
+    {
+        return objectOnThisTile != null;
+    }
+
+    public TileObject GetObjectOnThisTile()
+    {
+        return objectOnThisTile;
+    }
+
+    public bool TryGetObjectOnThisTile(out TileObject obj)
+    {
+        obj = objectOnThisTile;
+        return HasObjectOnThisTile();
+    }
+
     public bool TrySetObjectOnThisTile(TileObject objectOnTileBase)
     {
         if(objectOnThisTile != null)
@@ -50,6 +68,8 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         objectOnThisTile = objectOnTileBase;
         return true;
     }
+
+    #endregion
 
     #region TextXY
     public void SetXY(int x, int y)
@@ -89,8 +109,19 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         {
             if (GameManager.Instance.IsPlayerTurn() || true ) //TODO Change that after GameState is implemented
             {
-                GameManager.Instance.SetSelectedObject(objectOnThisTile);
-                Debug.Log($"Clicked on {objectOnThisTile}");
+                if (HasObjectOnThisTile())
+                {
+                    if (objectOnThisTile.IsPlayerType())
+                    {
+                        GameManager.Instance.SetSelectedObject(objectOnThisTile);
+                    }
+                    Debug.Log($"Clicked on {objectOnThisTile.name}");
+                }
+                else
+                {
+                    GameManager.Instance.SetSelectedObject(null);
+                    Debug.Log("Clicked on Empty Tile");
+                }
             }
         }
         if(eventData.button == PointerEventData.InputButton.Right)

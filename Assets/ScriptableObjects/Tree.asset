@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 949c38818ec8302438a4518888220b67, type: 3}
+  m_Name: Tree
+  m_EditorClassIdentifier: 
+  name: Tree
+  health: 1
+  movement: 0
+  isFlying: 0
+  prefab: {fileID: 2139142976168610244, guid: ff264c68ee9b91349b3ff1f1eddf9d1e, type: 3}
+  availableAttacks: 
