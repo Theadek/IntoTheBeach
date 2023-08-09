@@ -1,0 +1,34 @@
+{
+    "name": "Controls",
+    "maps": [
+        {
+            "name": "DebugActionMap",
+            "id": "4dc26683-fee8-494c-8057-63126d590022",
+            "actions": [
+                {
+                    "name": "ToggleDebugView",
+                    "type": "Button",
+                    "id": "4a27e432-9eb6-4ae7-857b-1183b4cfde5e",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "43a238ae-45c9-4954-a255-7bb12bff3f9d",
+                    "path": "<Keyboard>/f3",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ToggleDebugView",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
