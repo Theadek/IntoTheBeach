@@ -71,6 +71,13 @@ public class TileManager : MonoBehaviour
         return tiles;
     }
 
+    public Tile GetTile(Vector2Int xy)
+    {
+        if(xy.x < 0 || xy.x >= tileCount.x) return null;
+        if(xy.y < 0 || xy.y >= tileCount.y) return null;
+        return tiles[xy.x, xy.y];
+    }
+
     public bool TryGetNeighborTile(Tile tile, Direction direction, out Tile neighbor)
     {
         neighbor = null;
@@ -101,7 +108,7 @@ public class TileManager : MonoBehaviour
         }
         else if (direction == Direction.East)
         {
-            if (tile.GetXY().y - 1 >= tileCount[1])
+            if (tile.GetXY().y - 1 <= 0)
                 return false;
 
             neighbor = tiles[tile.GetXY().x, tile.GetXY().y - 1];

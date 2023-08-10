@@ -1,9 +1,12 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    public event EventHandler OnSelectedObject;
+
     public static GameManager Instance { get; private set; }
     private GameState gamestate;
 
@@ -35,9 +38,13 @@ public class GameManager : MonoBehaviour
             {
                 if (HasSelectedObject())
                 {
-                    TileManager.Instance.MoveTileObject(selectedObject, tile);
+                    if (PathFinding.Instance.ListConstainsXY(tile.GetXY()))
+                    {
+                        TileManager.Instance.MoveTileObject(selectedObject, tile);
+                    }
                 }
                 SetSelectedObject(null);
+
                 Debug.Log("Clicked on Empty Tile");
             }
         }
@@ -52,6 +59,7 @@ public class GameManager : MonoBehaviour
     public void SetSelectedObject(TileObject selectedObject)
     {
         this.selectedObject = selectedObject;
+        OnSelectedObject?.Invoke(this, EventArgs.Empty);
     }
 
     public bool HasSelectedObject()

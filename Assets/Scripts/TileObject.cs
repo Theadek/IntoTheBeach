@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 
 public class TileObject : MonoBehaviour
@@ -15,10 +16,14 @@ public class TileObject : MonoBehaviour
     [SerializeField] protected ObjectType objectType;
 
     // Abilities
+    protected bool hasMoved;
+
+    protected bool movable;
     protected bool pushable;
     protected bool hasArmor;
     protected bool hasShield;
     protected bool explosive;
+    protected bool isFlying;
 
 
     private void Awake()
@@ -27,11 +32,19 @@ public class TileObject : MonoBehaviour
         health = characterSO.health;
         healthMax = characterSO.health;
         movement = characterSO.movement;
+
+        hasMoved = false;
+
+        movable = characterSO.movable;
         pushable = characterSO.pushable;
+        hasArmor = characterSO.hasArmor;
+        hasShield = characterSO.hasShield;
+        explosive = characterSO.explosive;
+        isFlying = characterSO.isFlying;
     }
 
 
-    #region Tile
+    #region GET SET Tile
     public Tile GetTile()
     {
         return tile;
@@ -41,6 +54,12 @@ public class TileObject : MonoBehaviour
     {
         this.tile = tile;
     }
+    #endregion
+    #region GET movement
+    public int GetMovement() => movement;
+    #endregion
+    #region GET isFlying
+    public bool IsFlying() => isFlying;
     #endregion
 
     #region CharacterSO
@@ -54,6 +73,8 @@ public class TileObject : MonoBehaviour
         this.characterSO = characterSO;
     }
     #endregion
+
+    #region Damage Heal Push
 
     public void GetDamaged(int amount)
     {
@@ -142,16 +163,17 @@ public class TileObject : MonoBehaviour
     }
 
 
-    public void GetHealth(int amount)
+    public void GetHealed(int amount)
     {
         health += amount;
         if(health > healthMax)
             health = healthMax;
     }
+    #endregion
 
     #region enum ObjectType
     // Enum Object Type
-    protected enum ObjectType
+    public enum ObjectType
     {
         Player,
         Enemy,
@@ -161,6 +183,16 @@ public class TileObject : MonoBehaviour
     public bool IsPlayerType()
     {
         return objectType == ObjectType.Player;
+    }
+
+    public ObjectType GetObjectType()
+    {
+        return objectType;
+    }
+
+    public bool HasSameType(TileObject otherTileObject)
+    {
+        return objectType == otherTileObject.objectType; //TODO shouldn't be otherTileObject.GetObjectType() ???
     }
     #endregion
 
