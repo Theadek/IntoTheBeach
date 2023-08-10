@@ -12,6 +12,10 @@ public class CharacterSO : ScriptableObject
     public GameObject prefab;
     public AvailableAttacks[] availableAttacks;
 
+    public bool pushable;
+    public bool hasArmor;
+    public bool hasShield;
+
     public enum AvailableAttacks
     {
         Punch,

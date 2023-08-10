@@ -20,7 +20,7 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     private static bool showCoordinates;
     private bool myShowCoordinates;
 
-    private int X, Y;
+    private Vector2Int XY;
 
     private void Awake()
     {
@@ -59,42 +59,66 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         return HasObjectOnThisTile();
     }
 
-    public bool TrySetObjectOnThisTile(TileObject objectOnTileBase)
+    public void RemoveObjectOnThisTile()
+    {
+        objectOnThisTile = null;
+    }
+
+
+
+    public bool TrySetObjectOnThisTile(TileObject tileObject)
     {
         if(objectOnThisTile != null)
         {
             return false;
         }
-        objectOnThisTile = objectOnTileBase;
+        tileObject.transform.position = transform.position;
+        tileObject.transform.parent = transform;
+        tileObject.GetTile().RemoveObjectOnThisTile();
+        tileObject.SetTile(this);
+        objectOnThisTile = tileObject;
         return true;
     }
 
     #endregion
 
-    #region TextXY
-    public void SetXY(int x, int y)
+    #region XY
+
+    public void SetXY(Vector2Int xy)
     {
-        X = x;
-        Y = y;
+        XY = xy;
         UpdateText();
     }
+
+    public void SetXY(int x, int y)
+    {
+        XY.x = x;
+        XY.y = y;
+        UpdateText();
+    }
+
+    public Vector2Int GetXY()
+    {
+        return XY;
+    }
+
 
     private void UpdateText()
     {
         if (myShowCoordinates)
         {
-            coordinatesText.text = $"x:{X};y{Y}";
+            coordinatesText.text = $"x:{XY.x};y{XY.y}";
         }
         else
         {
             coordinatesText.text = "";
         }
     }
+    #endregion
 
     public static void ToggleShowCoordinates() {
         showCoordinates = !showCoordinates;
     }
-    #endregion
 
     #region Pointer
     public void OnPointerEnter(PointerEventData eventData)
@@ -107,26 +131,11 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     {
         if (eventData.button == PointerEventData.InputButton.Left)
         {
-            if (GameManager.Instance.IsPlayerTurn() || true ) //TODO Change that after GameState is implemented
-            {
-                if (HasObjectOnThisTile())
-                {
-                    if (objectOnThisTile.IsPlayerType())
-                    {
-                        GameManager.Instance.SetSelectedObject(objectOnThisTile);
-                    }
-                    Debug.Log($"Clicked on {objectOnThisTile.name}");
-                }
-                else
-                {
-                    GameManager.Instance.SetSelectedObject(null);
-                    Debug.Log("Clicked on Empty Tile");
-                }
-            }
+            GameManager.Instance.TileLeftClicked(this);
         }
         if(eventData.button == PointerEventData.InputButton.Right)
         {
-            // Display Tooltip
+            GameManager.Instance.TileRightClicked(this);
         }
     }
 

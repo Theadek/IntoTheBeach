@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        if(Instance == null)
+        if (Instance == null)
         {
             Instance = this;
         }
@@ -19,11 +19,52 @@ public class GameManager : MonoBehaviour
         gamestate = GameState.Setup;
     }
 
+    public void TileLeftClicked(Tile tile)
+    {
+        if (IsPlayerTurn() || true) //TODO Change that after GameState is implemented
+        {
+            if (tile.TryGetObjectOnThisTile(out TileObject tileObject))
+            {
+                if (tileObject.IsPlayerType())
+                {
+                    SetSelectedObject(tileObject);
+                }
+                Debug.Log($"Clicked on {tileObject.name}");
+            }
+            else
+            {
+                if (HasSelectedObject())
+                {
+                    TileManager.Instance.MoveTileObject(selectedObject, tile);
+                }
+                SetSelectedObject(null);
+                Debug.Log("Clicked on Empty Tile");
+            }
+        }
+    }
+
+
+    public void TileRightClicked(Tile tile)
+    {
+        // Display Tooltip
+    }
 
     public void SetSelectedObject(TileObject selectedObject)
     {
         this.selectedObject = selectedObject;
     }
+
+    public bool HasSelectedObject()
+    {
+        return Instance.selectedObject != null;
+    }
+
+    public bool TryGetSelectedObject(out TileObject tileObject)
+    {
+        tileObject = selectedObject;
+        return HasSelectedObject();
+    }
+
 
     private enum GameState
     {
