@@ -1,11 +1,14 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class PathFinding : MonoBehaviour
+public class PathFinder : MonoBehaviour
 {
-    public static PathFinding Instance { get; private set; }
+    public event EventHandler OnPossibleMovesChanged;
+
+    public static PathFinder Instance { get; private set; }
 
     private List<PathNode> possibleMoves;
 
@@ -94,11 +97,13 @@ public class PathFinding : MonoBehaviour
             }
             toSearch = newToSearch;
         }
+        OnPossibleMovesChanged?.Invoke(this, EventArgs.Empty);
     }
 
     private void ClearPossibleMoves()
     {
         possibleMoves = null;
+        OnPossibleMovesChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public bool ListConstainsXY(Vector2Int XY)
@@ -109,6 +114,16 @@ public class PathFinding : MonoBehaviour
             if (pathNode.XY == XY) return true;
         }
         return false;
+    }
+
+    public List<Vector2Int> GetPossibleMovesVector2()
+    {
+        List<Vector2Int> output = new List<Vector2Int>();
+        foreach (var pathNode in possibleMoves)
+        {
+            output.Add(pathNode.XY);
+        }
+        return output;
     }
 
 }

@@ -38,7 +38,7 @@ public class GameManager : MonoBehaviour
             {
                 if (HasSelectedObject())
                 {
-                    if (PathFinding.Instance.ListConstainsXY(tile.GetXY()))
+                    if (PathFinder.Instance.ListConstainsXY(tile.GetXY()))
                     {
                         TileManager.Instance.MoveTileObject(selectedObject, tile);
                     }

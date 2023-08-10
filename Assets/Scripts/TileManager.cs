@@ -78,6 +78,8 @@ public class TileManager : MonoBehaviour
         return tiles[xy.x, xy.y];
     }
 
+    public Grid GetGrid() => grid;
+
     public bool TryGetNeighborTile(Tile tile, Direction direction, out Tile neighbor)
     {
         neighbor = null;
@@ -92,7 +94,7 @@ public class TileManager : MonoBehaviour
         }
         else if (direction == Direction.South)
         {
-            if (tile.GetXY().x - 1 <= 0)
+            if (tile.GetXY().x - 1 < 0)
                 return false;
 
             neighbor = tiles[tile.GetXY().x - 1, tile.GetXY().y];
@@ -108,7 +110,7 @@ public class TileManager : MonoBehaviour
         }
         else if (direction == Direction.East)
         {
-            if (tile.GetXY().y - 1 <= 0)
+            if (tile.GetXY().y - 1 < 0)
                 return false;
 
             neighbor = tiles[tile.GetXY().x, tile.GetXY().y - 1];
@@ -160,7 +162,7 @@ public class TileManager : MonoBehaviour
     // Alpha Testing Script
     [SerializeField] private TileObject playerFighterPrefab;
     [SerializeField] private TileObject treePrefab;
-    private void RandomizeMap(float chance = 0.5f)
+    private void RandomizeMap(float chance = 0.3f)
     {
         //player
         int playerX = Random.Range(0, tileCount[0] - 1);
