@@ -341,6 +341,54 @@ MonoBehaviour:
   m_DeselectOnBackgroundClick: 1
   m_PointerBehavior: 0
   m_CursorLockBehavior: 0
+--- !u!1 &755339941
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 755339943}
+  - component: {fileID: 755339942}
+  m_Layer: 0
+  m_Name: PathFinderVisualArrows
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &755339942
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 755339941}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7025ab368c415f34f975c9758045ba2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  northArrowPrefab: {fileID: 8654427530147964405, guid: e153b4df51408144a93896efab5354ef, type: 3}
+  sountArrowPrefab: {fileID: 7616251146818563061, guid: 29b73f5e7d4df06438e19e3174c7993d, type: 3}
+  eastArrowPrefab: {fileID: 1754381836687139344, guid: 5f264236bffd7244f93f646b15ff16e7, type: 3}
+  westArrowPrefab: {fileID: 4002124716472008873, guid: f5d0a6c32cf61ab4ebb58f1f6a8b5a06, type: 3}
+--- !u!4 &755339943
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 755339941}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &804426368
 GameObject:
   m_ObjectHideFlags: 0
@@ -352,7 +400,7 @@ GameObject:
   - component: {fileID: 804426369}
   - component: {fileID: 804426370}
   m_Layer: 0
-  m_Name: PathFindingVisual
+  m_Name: PathFinderVisual
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -501,7 +549,7 @@ GameObject:
   - component: {fileID: 1981390904}
   - component: {fileID: 1981390905}
   m_Layer: 0
-  m_Name: PathFinding
+  m_Name: PathFinder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

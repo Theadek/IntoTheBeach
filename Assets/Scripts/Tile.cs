@@ -10,6 +10,11 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 {
     public event EventHandler OnPointerEnterEvent;
     public event EventHandler OnPointerExitEvent;
+    public static event EventHandler<OnAnyPointerEnterEventArgs> OnAnyPointerEnterEvent;
+    public class OnAnyPointerEnterEventArgs : EventArgs
+    {
+        public Vector2Int _xy;
+    }
 
 
     [SerializeField] private TextMeshPro coordinatesText;
@@ -125,6 +130,10 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     {
         selectedTile = this;
         OnPointerEnterEvent?.Invoke(this, EventArgs.Empty);
+        OnAnyPointerEnterEvent?.Invoke(this, new OnAnyPointerEnterEventArgs
+        {
+            _xy = this.XY
+        });
     }
 
     public void OnPointerClick(PointerEventData eventData)

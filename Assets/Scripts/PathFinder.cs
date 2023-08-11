@@ -38,7 +38,7 @@ public class PathFinder : MonoBehaviour
         }
     }
 
-    private class PathNode {
+    public class PathNode {
         public PathNode(Vector2Int xy, PathNode previous = null)
         {
             XY = xy;
@@ -124,6 +124,16 @@ public class PathFinder : MonoBehaviour
             output.Add(pathNode.XY);
         }
         return output;
+    }
+
+    public PathNode GetPathNodeForXY(Vector2Int XY)
+    {
+        if (possibleMoves == null) return null;
+        foreach (var pathNode in possibleMoves)
+        {
+            if (pathNode.XY == XY) return pathNode;
+        }
+        return null;
     }
 
 }

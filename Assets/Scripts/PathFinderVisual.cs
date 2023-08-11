@@ -5,13 +5,17 @@ using UnityEngine;
 public class PathFinderVisual : MonoBehaviour
 {
     [SerializeField] private GameObject highlightTilePrefab;
+
+
     private Grid grid;
 
     private void Start()
     {
         grid = TileManager.Instance.GetGrid();
         PathFinder.Instance.OnPossibleMovesChanged += PathFinding_OnPossibleMovesChanged;
+
     }
+
 
     private void PathFinding_OnPossibleMovesChanged(object sender, System.EventArgs e)
     {
