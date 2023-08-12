@@ -15,6 +15,11 @@ MonoBehaviour:
   name: Fighter
   health: 2
   movement: 4
-  isFlying: 0
   prefab: {fileID: 1522770271493839666, guid: 9aaf9c1e0adb1534c906d6447959a062, type: 3}
   availableAttacks: 00000000
+  movable: 1
+  pushable: 1
+  hasArmor: 0
+  hasShield: 0
+  explosive: 0
+  isFlying: 0

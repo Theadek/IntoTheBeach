@@ -50,6 +50,9 @@ public class PathFinder : MonoBehaviour
 
     private void CreateListOfPossibleMoves(TileObject tileObject)
     {
+        if (!tileObject.CanMove())
+            return;
+
         HashSet<Vector2Int> visited = new HashSet<Vector2Int>();
         List<PathNode> toSearch = new List<PathNode>();
         possibleMoves = new List<PathNode>();

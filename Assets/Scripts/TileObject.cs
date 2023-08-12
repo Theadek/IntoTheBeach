@@ -16,9 +16,10 @@ public class TileObject : MonoBehaviour
     [SerializeField] protected ObjectType objectType;
 
     // Abilities
-    protected bool hasMoved;
+    protected bool hasMoved; // 1 Move per turn
+    protected bool canMove;  // Is not sneared in place
 
-    protected bool movable;
+    protected bool movable;  // Can move (is not a building or mountain)
     protected bool pushable;
     protected bool hasArmor;
     protected bool hasShield;
@@ -34,6 +35,7 @@ public class TileObject : MonoBehaviour
         movement = characterSO.movement;
 
         hasMoved = false;
+        canMove = characterSO.movable;
 
         movable = characterSO.movable;
         pushable = characterSO.pushable;
@@ -55,9 +57,26 @@ public class TileObject : MonoBehaviour
         this.tile = tile;
     }
     #endregion
+
     #region GET movement
     public int GetMovement() => movement;
+
+    public bool CanMove()
+    {
+        return !hasMoved && canMove && movable;
+    }
+
+    public void ObjectJustMove()
+    {
+        hasMoved = true;
+    }
+
+    public void ResetMovement()
+    {
+        hasMoved = false;
+    }
     #endregion
+
     #region GET isFlying
     public bool IsFlying() => isFlying;
     #endregion

@@ -140,6 +140,7 @@ public class TileManager : MonoBehaviour
     public void MoveTileObject(TileObject from, Tile to)
     {
         to.TrySetObjectOnThisTile(from);
+        from.ObjectJustMove();
     }
     public void MoveTileObject(Tile from, Tile to)
     {
