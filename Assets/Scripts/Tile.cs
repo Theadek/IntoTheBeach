@@ -46,32 +46,32 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         }
     }
 
-    #region ObjectOnThisTile
+    #region TileObject
 
     public bool HasObjectOnThisTile()
     {
         return objectOnThisTile != null;
     }
 
-    public TileObject GetObjectOnThisTile()
+    public TileObject GetTileObject()
     {
         return objectOnThisTile;
     }
 
-    public bool TryGetObjectOnThisTile(out TileObject obj)
+    public bool TryGetTileObject(out TileObject obj)
     {
         obj = objectOnThisTile;
         return HasObjectOnThisTile();
     }
 
-    public void RemoveObjectOnThisTile()
+    public void RemoveTileObject()
     {
         objectOnThisTile = null;
     }
 
 
 
-    public bool TrySetObjectOnThisTile(TileObject tileObject)
+    public bool TrySetTileObject(TileObject tileObject)
     {
         if(objectOnThisTile != null)
         {
@@ -79,7 +79,7 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         }
         tileObject.transform.position = transform.position;
         tileObject.transform.parent = transform;
-        tileObject.GetTile().RemoveObjectOnThisTile();
+        tileObject.GetTile().RemoveTileObject();
         tileObject.SetTile(this);
         objectOnThisTile = tileObject;
         return true;

@@ -80,7 +80,7 @@ public class PathFinder : MonoBehaviour
 
                     if (TileManager.Instance.TryGetNeighborTile(currentTile, direction, out Tile neighbor))
                     {
-                        if(neighbor.TryGetObjectOnThisTile(out TileObject neighborObject))
+                        if(neighbor.TryGetTileObject(out TileObject neighborObject))
                         {
                             if(tileObject.HasSameType(neighborObject) || tileObject.IsFlying())
                             {

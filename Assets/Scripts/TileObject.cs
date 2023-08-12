@@ -6,6 +6,7 @@ using UnityEngine;
 public class TileObject : MonoBehaviour
 {
     [SerializeField] private CharacterSO characterSO;
+    protected MovementReverter movementReverter;
 
     // Variables
     protected Tile tile;
@@ -43,8 +44,21 @@ public class TileObject : MonoBehaviour
         hasShield = characterSO.hasShield;
         explosive = characterSO.explosive;
         isFlying = characterSO.isFlying;
+
+
+        movementReverter.previousPosition = null;
+        movementReverter.canRevert = false;
     }
 
+    private void Start()
+    {
+        GameManager.Instance.OnPlayerFinishTurn += GameManager_OnPlayerFinishTurn;
+    }
+
+    private void GameManager_OnPlayerFinishTurn(object sender, System.EventArgs e)
+    {
+        hasMoved = false;
+    }
 
     #region GET SET Tile
     public Tile GetTile()
@@ -66,7 +80,7 @@ public class TileObject : MonoBehaviour
         return !hasMoved && canMove && movable;
     }
 
-    public void ObjectJustMove()
+    public void ObjectJustMoved()
     {
         hasMoved = true;
     }
@@ -139,7 +153,7 @@ public class TileObject : MonoBehaviour
 
         if(TileManager.Instance.TryGetNeighborTile(tile, direction, out Tile newTile))
         {
-            if(newTile.TryGetObjectOnThisTile(out TileObject newTileObject))
+            if(newTile.TryGetTileObject(out TileObject newTileObject))
             {
                 newTileObject.GetDamagedFromPush();
                 this.GetDamagedFromPush();
@@ -177,7 +191,7 @@ public class TileObject : MonoBehaviour
                 newTileObject.GetDamaged(explosionDamage);
             }
         }
-        tile.RemoveObjectOnThisTile();
+        tile.RemoveTileObject();
         Destroy(gameObject);
     }
 
@@ -204,6 +218,11 @@ public class TileObject : MonoBehaviour
         return objectType == ObjectType.Player;
     }
 
+    public bool IsEnemyType()
+    {
+        return objectType == ObjectType.Enemy;
+    }
+
     public ObjectType GetObjectType()
     {
         return objectType;
@@ -215,6 +234,31 @@ public class TileObject : MonoBehaviour
     }
     #endregion
 
+    #region Movement Reverter
+    protected struct MovementReverter
+    {
+        public Tile previousPosition;
+        public bool canRevert;
+    }
+
+    public void SavePreviousPosition()
+    {
+        movementReverter.previousPosition = GetTile();
+        movementReverter.canRevert = true;
+    }
+
+    public bool TryGetPreviousPosition(out Tile previousPosition)
+    {
+        if (!movementReverter.canRevert)
+        {
+            previousPosition = null;
+            return false;
+        }
+        previousPosition = movementReverter.previousPosition;
+        return true;
+    }
+
+    #endregion
 
     // Static TileObject Creation
     public static TileObject CreateTileObject(Tile parent, CharacterSO characterSO)

@@ -28,14 +28,13 @@ public class TileManager : MonoBehaviour
     {
         GenerateGrid();
         RandomizeMap();
+
+        GameInput.Instance.OnToggleDebugView += GameInput_OnToggleDebugView;
     }
 
-    private void Update()
+    private void GameInput_OnToggleDebugView(object sender, System.EventArgs e)
     {
-        if (Input.GetKeyDown(KeyCode.F3))
-        {
-            Tile.ToggleShowCoordinates();
-        }
+        Tile.ToggleShowCoordinates();
     }
 
     private void RegenerateGrid()
@@ -79,6 +78,13 @@ public class TileManager : MonoBehaviour
     }
 
     public Grid GetGrid() => grid;
+
+    public Vector3 GetGridPosition(Vector2Int xy)
+    {
+        return grid.GetCellCenterWorld(new Vector3Int(xy.x, xy.y, 0));
+    }
+
+
 
     public bool TryGetNeighborTile(Tile tile, Direction direction, out Tile neighbor)
     {
@@ -130,21 +136,41 @@ public class TileManager : MonoBehaviour
             return false;
         }
 
-        if(neighborTile.TryGetObjectOnThisTile(out neighbor))
+        if(neighborTile.TryGetTileObject(out neighbor))
         {
             return true;
         }
         return false;
     }
 
+    public void MovePlayerTileObject(TileObject from, Tile to)
+    {
+        from.ObjectJustMoved();
+        from.SavePreviousPosition();
+        MoveTileObject(from, to);
+    }
+
+    public void RevertMovePlayerTileObject(TileObject tileObject)
+    {
+        if(tileObject.TryGetPreviousPosition(out Tile previousPosition)){
+
+            MoveTileObject(tileObject, previousPosition);
+            tileObject.ResetMovement();
+        }
+    }
+
+
+
+
+
+
     public void MoveTileObject(TileObject from, Tile to)
     {
-        to.TrySetObjectOnThisTile(from);
-        from.ObjectJustMove();
+        to.TrySetTileObject(from);
     }
     public void MoveTileObject(Tile from, Tile to)
     {
-        MoveTileObject(from.GetObjectOnThisTile(), to);
+        MoveTileObject(from.GetTileObject(), to);
     }
 
     public void MoveTileObjectByOne(Tile from, Direction direction)
@@ -160,16 +186,24 @@ public class TileManager : MonoBehaviour
 
 
 
-    // Alpha Testing Script
+    // Alpha Testing Script -- TO REMOVE LATER
     [SerializeField] private TileObject playerFighterPrefab;
     [SerializeField] private TileObject treePrefab;
     private void RandomizeMap(float chance = 0.3f)
     {
-        //player
-        int playerX = Random.Range(0, tileCount[0] - 1);
-        int playerY = Random.Range(0, tileCount[1] - 1);
-        var newPlayerObject = TileObject.CreateTileObject(tiles[playerX, playerY].GetComponent<Tile>(), playerFighterPrefab.GetCharacterSO());
-        tiles[playerX, playerY].GetComponent<Tile>().TrySetObjectOnThisTile(newPlayerObject);
+        // player
+        for(int i = 0; i < 3; i++)
+        {
+            int playerX, playerY;
+            do
+            {
+                playerX = Random.Range(0, tileCount[0] - 1);
+                playerY = Random.Range(0, tileCount[1] - 1);
+            } while (tiles[playerX, playerY].HasObjectOnThisTile());
+            var newPlayerObject = TileObject.CreateTileObject(tiles[playerX, playerY].GetComponent<Tile>(), playerFighterPrefab.GetCharacterSO());
+            tiles[playerX, playerY].GetComponent<Tile>().TrySetTileObject(newPlayerObject);
+
+        }
 
         //trees
         for (int y = 0; y < tileCount[1]; y++)
@@ -180,7 +214,7 @@ public class TileManager : MonoBehaviour
                 if(Random.Range(0f,1f) <= chance)
                 {
                     var newTileObject = TileObject.CreateTileObject(tiles[x, y].GetComponent<Tile>(), treePrefab.GetCharacterSO());
-                    tiles[x, y].GetComponent<Tile>().TrySetObjectOnThisTile(newTileObject);
+                    tiles[x, y].GetComponent<Tile>().TrySetTileObject(newTileObject);
                 }
             }
         }

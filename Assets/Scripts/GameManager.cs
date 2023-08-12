@@ -7,11 +7,13 @@ public class GameManager : MonoBehaviour
 {
     public event EventHandler OnSelectedObject;
     public event EventHandler OnGameStateChanged;
+    public event EventHandler OnPlayerFinishTurn;
 
     public static GameManager Instance { get; private set; }
     private GameState gamestate;
 
     private TileObject selectedObject;
+    private Stack<TileObject> lastMovements = new Stack<TileObject>();
 
     private void Awake()
     {
@@ -21,6 +23,31 @@ public class GameManager : MonoBehaviour
         }
 
         gamestate = GameState.Setup;
+    }
+
+    private void Start()
+    {
+        GameInput.Instance.OnRevertLastMove += GameInput_OnRevertLastMove;
+        GameInput.Instance.OnEndTurn += GameInput_OnEndTurn;
+    }
+
+    private void GameInput_OnEndTurn(object sender, EventArgs e)
+    {
+        if (!IsPlayerTurn())
+            return;
+        SetSelectedObject(null);
+        EndPlayerTurn();
+    }
+
+    private void GameInput_OnRevertLastMove(object sender, EventArgs e)
+    {
+        if (!IsPlayerTurn())
+            return;
+        if(TryGetLastPlayerMovementTileObject(out TileObject tileObject))
+        {
+            TileManager.Instance.RevertMovePlayerTileObject(tileObject);
+            SetSelectedObject(null);
+        }
     }
 
     private void Update()
@@ -40,12 +67,10 @@ public class GameManager : MonoBehaviour
                 ChangeGameState(GameState.PlayerTurn);
                 break;
             case GameState.PlayerTurn:
-                // TODO - Player can choose to move -> revert move;
-                //        attack (not revertable);
+                // TODO - attack (not revertable);
                 //        one time revert whole turn
-                //        Ends when player press finish turn
 
-                //ChangeGameState(GameState.Hazards);
+                //Waiting for Player Input to finish Player Turn
                 break;
             case GameState.Hazards:
                 // TODO - All units can take damage from hazards (like fire or meteors)
@@ -72,7 +97,7 @@ public class GameManager : MonoBehaviour
     {
         if (IsPlayerTurn())
         {
-            if (tile.TryGetObjectOnThisTile(out TileObject tileObject))
+            if (tile.TryGetTileObject(out TileObject tileObject))
             {
                 // Tile has Object
                 if (tileObject.IsPlayerType())
@@ -86,6 +111,10 @@ public class GameManager : MonoBehaviour
                         SetSelectedObject(tileObject);
                     }
                 }
+                else if (tileObject.IsEnemyType())
+                {
+                    // TODO Show Enemies Attack Details???
+                }
             }
             else
             {
@@ -95,7 +124,8 @@ public class GameManager : MonoBehaviour
                     if (PathFinder.Instance.ListConstainsXY(tile.GetXY()) &&
                         selectedObject.CanMove())
                     {
-                        TileManager.Instance.MoveTileObject(selectedObject, tile);
+                        TileManager.Instance.MovePlayerTileObject(selectedObject, tile);
+                        SaveLastPlayerMovement();
                     }
                 }
                 SetSelectedObject(null);
@@ -145,9 +175,32 @@ public class GameManager : MonoBehaviour
         return gamestate == GameState.PlayerTurn;
     }
 
+    public void EndPlayerTurn()
+    {
+        // TODO Check if moves not done, and display warning?
+        ClearLastPlayerMovement();
+        OnPlayerFinishTurn?.Invoke(this, EventArgs.Empty);
+        ChangeGameState(GameState.Hazards);
+    }
+
     private void ChangeGameState(GameState state)
     {
         gamestate = state;
         OnGameStateChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void SaveLastPlayerMovement()
+    {
+        lastMovements.Push(selectedObject);
+    }
+
+    private bool TryGetLastPlayerMovementTileObject(out TileObject tileObject)
+    {
+        return lastMovements.TryPop(out tileObject);
+    }
+
+    private void ClearLastPlayerMovement()
+    {
+        lastMovements.Clear();
     }
 }

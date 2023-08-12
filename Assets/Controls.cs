@@ -50,6 +50,54 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Player"",
+            ""id"": ""1ef2d830-b207-4f63-81e6-da4a3fe74400"",
+            ""actions"": [
+                {
+                    ""name"": ""RevertLastMove"",
+                    ""type"": ""Button"",
+                    ""id"": ""843e4e13-e14e-423d-b848-3453ea07bb7c"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""EndTurn"",
+                    ""type"": ""Button"",
+                    ""id"": ""bf47983b-0628-42ff-b2b9-b7cc44449dd2"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""4b9035ef-9b6f-47fa-bc11-edd150c9a162"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""RevertLastMove"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f84a5f4e-d9ac-4696-8b3f-41fcb93c6046"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""EndTurn"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -57,6 +105,10 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         // DebugActionMap
         m_DebugActionMap = asset.FindActionMap("DebugActionMap", throwIfNotFound: true);
         m_DebugActionMap_ToggleDebugView = m_DebugActionMap.FindAction("ToggleDebugView", throwIfNotFound: true);
+        // Player
+        m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
+        m_Player_RevertLastMove = m_Player.FindAction("RevertLastMove", throwIfNotFound: true);
+        m_Player_EndTurn = m_Player.FindAction("EndTurn", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -160,8 +212,67 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         }
     }
     public DebugActionMapActions @DebugActionMap => new DebugActionMapActions(this);
+
+    // Player
+    private readonly InputActionMap m_Player;
+    private List<IPlayerActions> m_PlayerActionsCallbackInterfaces = new List<IPlayerActions>();
+    private readonly InputAction m_Player_RevertLastMove;
+    private readonly InputAction m_Player_EndTurn;
+    public struct PlayerActions
+    {
+        private @Controls m_Wrapper;
+        public PlayerActions(@Controls wrapper) { m_Wrapper = wrapper; }
+        public InputAction @RevertLastMove => m_Wrapper.m_Player_RevertLastMove;
+        public InputAction @EndTurn => m_Wrapper.m_Player_EndTurn;
+        public InputActionMap Get() { return m_Wrapper.m_Player; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(PlayerActions set) { return set.Get(); }
+        public void AddCallbacks(IPlayerActions instance)
+        {
+            if (instance == null || m_Wrapper.m_PlayerActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_PlayerActionsCallbackInterfaces.Add(instance);
+            @RevertLastMove.started += instance.OnRevertLastMove;
+            @RevertLastMove.performed += instance.OnRevertLastMove;
+            @RevertLastMove.canceled += instance.OnRevertLastMove;
+            @EndTurn.started += instance.OnEndTurn;
+            @EndTurn.performed += instance.OnEndTurn;
+            @EndTurn.canceled += instance.OnEndTurn;
+        }
+
+        private void UnregisterCallbacks(IPlayerActions instance)
+        {
+            @RevertLastMove.started -= instance.OnRevertLastMove;
+            @RevertLastMove.performed -= instance.OnRevertLastMove;
+            @RevertLastMove.canceled -= instance.OnRevertLastMove;
+            @EndTurn.started -= instance.OnEndTurn;
+            @EndTurn.performed -= instance.OnEndTurn;
+            @EndTurn.canceled -= instance.OnEndTurn;
+        }
+
+        public void RemoveCallbacks(IPlayerActions instance)
+        {
+            if (m_Wrapper.m_PlayerActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IPlayerActions instance)
+        {
+            foreach (var item in m_Wrapper.m_PlayerActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_PlayerActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public PlayerActions @Player => new PlayerActions(this);
     public interface IDebugActionMapActions
     {
         void OnToggleDebugView(InputAction.CallbackContext context);
+    }
+    public interface IPlayerActions
+    {
+        void OnRevertLastMove(InputAction.CallbackContext context);
+        void OnEndTurn(InputAction.CallbackContext context);
     }
 }
