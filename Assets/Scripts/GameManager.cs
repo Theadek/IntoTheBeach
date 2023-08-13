@@ -35,6 +35,22 @@ public class GameManager : MonoBehaviour
         GameInput.Instance.OnRepair += GameInput_OnRepair;
         GameInput.Instance.OnEndTurn += GameInput_OnEndTurn;
         GameInput.Instance.OnFirstWeaponUse += GameInput_OnFirstWeaponUse;
+        GameInput.Instance.OnSecondWeaponUse += GameInput_OnSecondWeaponUse;
+    }
+
+    private void GameInput_OnSecondWeaponUse(object sender, EventArgs e)
+    {
+        if (!IsPlayerTurn() || !HasSelectedObject())
+            return;
+        if (selectedObject.GetHasDoneAction())
+            return;
+        if (!selectedObject.HasSecondWeapon())
+            return;
+        if (selectedObject.IsSecondWeaponPasive())
+            return;
+
+        selectionType = SelectionType.SecondWeapon;
+        OnSelectedTypeChanged?.Invoke(this, EventArgs.Empty);
     }
 
     private void GameInput_OnFirstWeaponUse(object sender, EventArgs e)
@@ -44,6 +60,8 @@ public class GameManager : MonoBehaviour
         if (selectedObject.GetHasDoneAction())
             return;
         if (!selectedObject.HasFirstWeapon())
+            return;
+        if (selectedObject.IsFirstWeaponPasive())
             return;
 
         selectionType = SelectionType.FirstWeapon;
@@ -175,11 +193,17 @@ public class GameManager : MonoBehaviour
                 {
                     selectedObject.AttackTileFirstWeapon(tile);
                     SetSelectedObject(null);
+                    ClearLastPlayerMovement();
                 }
             }
             else if(selectionType == SelectionType.SecondWeapon)
             {
-                ;
+                if (selectedObject.IsTileInRangeSecondWeapon(tile))
+                {
+                    selectedObject.AttackTileSecondWeapon(tile);
+                    SetSelectedObject(null);
+                    ClearLastPlayerMovement();
+                }
             }
         }
     }

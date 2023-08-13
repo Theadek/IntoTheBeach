@@ -11,9 +11,12 @@ public class FistPunch : BaseWeapon
         AttackHighlightPrefabS = GameAssets.i.fistPunchHighlightS;
         AttackHighlightPrefabE = GameAssets.i.fistPunchHighlightE;
         AttackHighlightPrefabW = GameAssets.i.fistPunchHighlightW;
-        upgrades = new List<Upgrade>();
-        upgrades.Add(new Upgrade(false, 1, "Deal additional DMG"));
-        upgrades.Add(new Upgrade(false, 2, "Dash To Target"));
+        isPasive = false;
+        upgrades = new List<Upgrade>
+        {
+            new Upgrade(false, 1, "Deal additional DMG"),
+            new Upgrade(false, 2, "Dash To Target")
+        };
     }
 
     public override void AttackTile(Tile from, Tile tile)

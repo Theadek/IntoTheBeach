@@ -9,12 +9,11 @@ public abstract class BaseWeapon
     public abstract List<Tile> GetPossibleAttackPlaces(Tile from);
     public abstract bool IsTileInRange(Tile from, Tile tile);
     public abstract void AttackTile(Tile from, Tile tile);
-    //public abstract void GetHighlights(Tile from, Tile tile, Transform parent);
     public GameObject AttackHighlightPrefabN;
     public GameObject AttackHighlightPrefabS;
     public GameObject AttackHighlightPrefabE;
     public GameObject AttackHighlightPrefabW;
-
+    public bool isPasive;
     // Upgrades
     public List<Upgrade> upgrades;
     public struct Upgrade

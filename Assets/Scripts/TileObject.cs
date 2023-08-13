@@ -320,7 +320,10 @@ public class TileObject : MonoBehaviour
         hasMoved = true;
         hasDoneAction = true;
     }
-
+    public bool IsFirstWeaponPasive()
+    {
+        return weapons[0].isPasive;
+    }
     // Second Weapon
     public bool HasSecondWeapon()
     {
@@ -339,6 +342,10 @@ public class TileObject : MonoBehaviour
         weapons[1].AttackTile(GetTile(), tile);
         hasMoved = true;
         hasDoneAction = true;
+    }
+    public bool IsSecondWeaponPasive()
+    {
+        return weapons[0].isPasive;
     }
     #endregion
 
