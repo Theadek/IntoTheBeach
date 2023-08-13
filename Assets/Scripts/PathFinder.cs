@@ -23,7 +23,7 @@ public class PathFinder : MonoBehaviour
 
     private void Start()
     {
-        GameManager.Instance.OnSelectedObject += GameManager_OnSelectedObject;
+        GameManager.Instance.OnSelectedObjectChanged += GameManager_OnSelectedObject;
     }
 
     private void GameManager_OnSelectedObject(object sender, System.EventArgs e)
@@ -51,7 +51,11 @@ public class PathFinder : MonoBehaviour
     private void CreateListOfPossibleMoves(TileObject tileObject)
     {
         if (!tileObject.CanMove())
+        {
+            ClearPossibleMoves();
+            OnPossibleMovesChanged?.Invoke(this, EventArgs.Empty);
             return;
+        }
 
         HashSet<Vector2Int> visited = new HashSet<Vector2Int>();
         List<PathNode> toSearch = new List<PathNode>();
@@ -122,6 +126,8 @@ public class PathFinder : MonoBehaviour
     public List<Vector2Int> GetPossibleMovesVector2()
     {
         List<Vector2Int> output = new List<Vector2Int>();
+        if (possibleMoves == null)
+            return output;
         foreach (var pathNode in possibleMoves)
         {
             output.Add(pathNode.XY);

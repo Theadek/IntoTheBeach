@@ -29,34 +29,52 @@ public class Helpers
             direction = Direction.COUNT;
             return false;
         }
+        direction = GetDirection(directionVector);
+        return true;
+    }
 
-        if(directionVector == new Vector2Int(1, 0))
+    public static bool TryGetDirectionLong(Vector2Int from, Vector2Int to, out Direction direction, out int distance)
+    {
+        Vector2Int directionVector = to - from;
+        if((directionVector.x != 0 && directionVector.y != 0) ||
+           (directionVector.x == 0 && directionVector.y == 0))
         {
-            direction = Direction.North;
-            return true;
+            direction = Direction.COUNT;
+            distance = 0;
+            return false;
         }
-        else if (directionVector == new Vector2Int(-1, 0))
+
+        direction = GetDirection(directionVector / (int)directionVector.magnitude);
+        distance = (int)directionVector.magnitude;
+        return true;
+    }
+
+    private static Direction GetDirection(Vector2Int direction)
+    {
+        if (direction == new Vector2Int(1, 0))
         {
-            direction = Direction.South;
-            return true;
+            return Direction.North;
         }
-        else if (directionVector == new Vector2Int(0, 1))
+        else if (direction == new Vector2Int(-1, 0))
         {
-            direction = Direction.West;
-            return true;
+            return Direction.South;
+
         }
-        else if (directionVector == new Vector2Int(0, -1))
+        else if (direction == new Vector2Int(0, 1))
         {
-            direction = Direction.East;
-            return true;
+            return Direction.West;
+
+        }
+        else if (direction == new Vector2Int(0, -1))
+        {
+            return Direction.East;
+
         }
         else
         {
             //not sure how it got here
-            direction = Direction.COUNT;
-            return false;
+            return Direction.COUNT;
         }
-
     }
 }
 

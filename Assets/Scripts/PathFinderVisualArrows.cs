@@ -16,7 +16,7 @@ public class PathFinderVisualArrows : MonoBehaviour
     {
         grid = TileManager.Instance.GetGrid();
         Tile.OnAnyPointerEnterEvent += Tile_OnAnyPointerEnterEvent;
-        GameManager.Instance.OnSelectedObject += GameManager_OnSelectedObject;
+        GameManager.Instance.OnSelectedObjectChanged += GameManager_OnSelectedObject;
     }
 
     private void GameManager_OnSelectedObject(object sender, System.EventArgs e)

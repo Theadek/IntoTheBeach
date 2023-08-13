@@ -188,22 +188,35 @@ public class TileManager : MonoBehaviour
 
     // Alpha Testing Script -- TO REMOVE LATER
     [SerializeField] private TileObject playerFighterPrefab;
+    [SerializeField] private TileObject enemyFighterPrefab;
     [SerializeField] private TileObject treePrefab;
     private void RandomizeMap(float chance = 0.3f)
     {
         // player
         for(int i = 0; i < 3; i++)
         {
-            int playerX, playerY;
+            int x, y;
             do
             {
-                playerX = Random.Range(0, tileCount[0] - 1);
-                playerY = Random.Range(0, tileCount[1] - 1);
-            } while (tiles[playerX, playerY].HasObjectOnThisTile());
-            var newPlayerObject = TileObject.CreateTileObject(tiles[playerX, playerY].GetComponent<Tile>(), playerFighterPrefab.GetCharacterSO());
-            tiles[playerX, playerY].GetComponent<Tile>().TrySetTileObject(newPlayerObject);
-
+                x = Random.Range(0, tileCount[0] - 1);
+                y = Random.Range(0, tileCount[1] - 1);
+            } while (tiles[x, y].HasObjectOnThisTile());
+            var newPlayerObject = TileObject.CreateTileObject(tiles[x, y].GetComponent<Tile>(), playerFighterPrefab.GetCharacterSO());
+            tiles[x, y].GetComponent<Tile>().TrySetTileObject(newPlayerObject);
         }
+        // enemies
+        for(int i = 0; i < 3; i++)
+        {
+            int x, y;
+            do
+            {
+                x = Random.Range(0, tileCount[0] - 1);
+                y = Random.Range(0, tileCount[1] - 1);
+            } while (tiles[x, y].HasObjectOnThisTile());
+            var newPlayerObject = TileObject.CreateTileObject(tiles[x, y].GetComponent<Tile>(), enemyFighterPrefab.GetCharacterSO());
+            tiles[x, y].GetComponent<Tile>().TrySetTileObject(newPlayerObject);
+        }
+
 
         //trees
         for (int y = 0; y < tileCount[1]; y++)

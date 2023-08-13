@@ -9,7 +9,7 @@ public class TileObjectSelectedVisual : MonoBehaviour
 
     private void Start()
     {
-        GameManager.Instance.OnSelectedObject += GameManager_OnSelectedObject;
+        GameManager.Instance.OnSelectedObjectChanged += GameManager_OnSelectedObject;
     }
 
     private void GameManager_OnSelectedObject(object sender, System.EventArgs e)

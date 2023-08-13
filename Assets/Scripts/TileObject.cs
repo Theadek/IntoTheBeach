@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -5,8 +6,12 @@ using UnityEngine;
 
 public class TileObject : MonoBehaviour
 {
+    public event EventHandler OnHealthChanged;
+
+
     [SerializeField] private CharacterSO characterSO;
     protected MovementReverter movementReverter;
+    protected List<BaseWeapon> weapons;
 
     // Variables
     protected Tile tile;
@@ -17,7 +22,8 @@ public class TileObject : MonoBehaviour
     [SerializeField] protected ObjectType objectType;
 
     // Abilities
-    protected bool hasMoved; // 1 Move per turn
+    protected bool hasDoneAction;
+    protected bool hasMoved; // 1 Move per turn / or can't move after attacking
     protected bool canMove;  // Is not sneared in place
 
     protected bool movable;  // Can move (is not a building or mountain)
@@ -35,6 +41,7 @@ public class TileObject : MonoBehaviour
         healthMax = characterSO.health;
         movement = characterSO.movement;
 
+        hasDoneAction = false;
         hasMoved = false;
         canMove = characterSO.movable;
 
@@ -48,6 +55,12 @@ public class TileObject : MonoBehaviour
 
         movementReverter.previousPosition = null;
         movementReverter.canRevert = false;
+
+        weapons = new List<BaseWeapon>();
+        foreach(var availableAttack in characterSO.availableAttacks)
+        {
+            weapons.Add(BaseWeapon.CreateWeapon(availableAttack));
+        }
     }
 
     private void Start()
@@ -58,6 +71,7 @@ public class TileObject : MonoBehaviour
     private void GameManager_OnPlayerFinishTurn(object sender, System.EventArgs e)
     {
         hasMoved = false;
+        hasDoneAction = false;
     }
 
     #region GET SET Tile
@@ -109,6 +123,9 @@ public class TileObject : MonoBehaviour
 
     #region Damage Heal Push
 
+    public int GetCurrentHealth() => health;
+    public int GetMaxHealth() => healthMax;
+
     public void GetDamaged(int amount)
     {
         if (hasShield)
@@ -129,6 +146,7 @@ public class TileObject : MonoBehaviour
             health = 0;
             GetDestroyed();
         }
+        OnHealthChanged?.Invoke(this, EventArgs.Empty);
     }
 
     private void GetDamagedFromPush()
@@ -145,6 +163,7 @@ public class TileObject : MonoBehaviour
             health = 0;
             GetDestroyed();
         }
+        OnHealthChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public void GetPushed(Direction direction)
@@ -196,11 +215,12 @@ public class TileObject : MonoBehaviour
     }
 
 
-    public void GetHealed(int amount)
+    protected void GetHealed(int amount)
     {
         health += amount;
         if(health > healthMax)
             health = healthMax;
+        OnHealthChanged?.Invoke(this, EventArgs.Empty);
     }
     #endregion
 
@@ -258,6 +278,68 @@ public class TileObject : MonoBehaviour
         return true;
     }
 
+    private void ClearPreviousPosition()
+    {
+        movementReverter.previousPosition = null;
+        movementReverter.canRevert = false;
+    }
+
+    #endregion
+
+    #region HasDoneAction
+    public bool GetHasDoneAction() => hasDoneAction;
+    #endregion
+
+    #region Repair Action
+    public void RepairSelf()
+    {
+        GetHealed(1);
+        // TODO Also clears bad effects like being on fire
+        hasMoved = true;
+        hasDoneAction = true;
+    }
+    #endregion
+
+    #region Weapons
+    // First Weapon
+    public bool HasFirstWeapon()
+    {
+        return weapons.Count >= 1;
+    }
+    public List<Tile> GetFirstWeaponPossiblePlaces()
+    {
+        return weapons[0].GetPossibleAttackPlaces(GetTile());
+    }
+    public bool IsTileInRangeFirstWeapon(Tile tile)
+    {
+        return weapons[0].IsTileInRange(GetTile(), tile);
+    }
+    public void AttackTileFirstWeapon(Tile tile)
+    {
+        weapons[0].AttackTile(GetTile(), tile);
+        hasMoved = true;
+        hasDoneAction = true;
+    }
+
+    // Second Weapon
+    public bool HasSecondWeapon()
+    {
+        return weapons.Count >= 2;
+    }
+    public List<Tile> GetSecondWeaponPossiblePlaces()
+    {
+        return weapons[1].GetPossibleAttackPlaces(GetTile());
+    }
+    public bool IsTileInRangeSecondWeapon(Tile tile)
+    {
+        return weapons[1].IsTileInRange(GetTile(), tile);
+    }
+    public void AttackTileSecondWeapon(Tile tile)
+    {
+        weapons[1].AttackTile(GetTile(), tile);
+        hasMoved = true;
+        hasDoneAction = true;
+    }
     #endregion
 
     // Static TileObject Creation

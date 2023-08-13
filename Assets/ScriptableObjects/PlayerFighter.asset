@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: PlayerFighter
   m_EditorClassIdentifier: 
   name: Fighter
-  health: 2
+  health: 3
   movement: 4
-  prefab: {fileID: 1522770271493839666, guid: 9aaf9c1e0adb1534c906d6447959a062, type: 3}
+  prefab: {fileID: 3231576587770314998, guid: 629b0db20ed77cc4cbc32526d77d6ae9, type: 3}
   availableAttacks: 00000000
   movable: 1
   pushable: 1

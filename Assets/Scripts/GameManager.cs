@@ -1,11 +1,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public event EventHandler OnSelectedObject;
+    public event EventHandler OnSelectedObjectChanged;
+    public event EventHandler OnSelectedTypeChanged;
     public event EventHandler OnGameStateChanged;
     public event EventHandler OnPlayerFinishTurn;
 
@@ -13,6 +15,8 @@ public class GameManager : MonoBehaviour
     private GameState gamestate;
 
     private TileObject selectedObject;
+    private SelectionType selectionType = SelectionType.NULL;
+
     private Stack<TileObject> lastMovements = new Stack<TileObject>();
 
     private void Awake()
@@ -28,7 +32,34 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         GameInput.Instance.OnRevertLastMove += GameInput_OnRevertLastMove;
+        GameInput.Instance.OnRepair += GameInput_OnRepair;
         GameInput.Instance.OnEndTurn += GameInput_OnEndTurn;
+        GameInput.Instance.OnFirstWeaponUse += GameInput_OnFirstWeaponUse;
+    }
+
+    private void GameInput_OnFirstWeaponUse(object sender, EventArgs e)
+    {
+        if (!IsPlayerTurn() || !HasSelectedObject())
+            return;
+        if (selectedObject.GetHasDoneAction())
+            return;
+        if (!selectedObject.HasFirstWeapon())
+            return;
+
+        selectionType = SelectionType.FirstWeapon;
+        OnSelectedTypeChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void GameInput_OnRepair(object sender, EventArgs e)
+    {
+        if (!IsPlayerTurn() || !HasSelectedObject())
+            return;
+        if (selectedObject.GetHasDoneAction())
+            return;
+
+        selectedObject.RepairSelf();
+        SetSelectedObject(selectedObject);
+        ClearLastPlayerMovement();
     }
 
     private void GameInput_OnEndTurn(object sender, EventArgs e)
@@ -97,52 +128,89 @@ public class GameManager : MonoBehaviour
     {
         if (IsPlayerTurn())
         {
-            if (tile.TryGetTileObject(out TileObject tileObject))
+            if (selectionType == SelectionType.NULL ||
+                selectionType == SelectionType.Movement)
             {
-                // Tile has Object
-                if (tileObject.IsPlayerType())
+                if (tile.TryGetTileObject(out TileObject tileObject))
                 {
-                    if(tileObject == selectedObject)
+                    // Tile has Object
+                    if (tileObject.IsPlayerType())
                     {
-                        SetSelectedObject(null);
+                        if (tileObject == selectedObject)
+                        {
+                            SetSelectedObject(null);
+                        }
+                        else
+                        {
+                            SetSelectedObject(tileObject);
+                        }
+                    }
+                    else if (tileObject.IsEnemyType())
+                    {
+                        // TODO Show Enemies Attack Details???
+                    }
+                }
+                else
+                {
+                    // Tile is empty
+                    if (HasSelectedObject())
+                    {
+                        if (PathFinder.Instance.ListConstainsXY(tile.GetXY()) &&
+                            selectedObject.CanMove())
+                        {
+                            TileManager.Instance.MovePlayerTileObject(selectedObject, tile);
+                            SaveLastPlayerMovement();
+                            SetSelectedObject(selectedObject);
+                        }
                     }
                     else
                     {
-                        SetSelectedObject(tileObject);
+                        SetSelectedObject(null);
                     }
-                }
-                else if (tileObject.IsEnemyType())
-                {
-                    // TODO Show Enemies Attack Details???
                 }
             }
-            else
+            else if(selectionType == SelectionType.FirstWeapon)
             {
-                // Tile is empty
-                if (HasSelectedObject())
+                if (selectedObject.IsTileInRangeFirstWeapon(tile))
                 {
-                    if (PathFinder.Instance.ListConstainsXY(tile.GetXY()) &&
-                        selectedObject.CanMove())
-                    {
-                        TileManager.Instance.MovePlayerTileObject(selectedObject, tile);
-                        SaveLastPlayerMovement();
-                    }
+                    selectedObject.AttackTileFirstWeapon(tile);
+                    SetSelectedObject(null);
                 }
-                SetSelectedObject(null);
+            }
+            else if(selectionType == SelectionType.SecondWeapon)
+            {
+                ;
             }
         }
     }
 
 
+    // DEBUG FOR NOW
     public void TileRightClicked(Tile tile)
     {
-        // Display Tooltip
+        if (IsPlayerTurn())
+        {
+            if (tile.TryGetTileObject(out TileObject tileObject))
+            {
+                tileObject.GetDamaged(1);
+            }
+        }
     }
 
     public void SetSelectedObject(TileObject selectedObject)
     {
         this.selectedObject = selectedObject;
-        OnSelectedObject?.Invoke(this, EventArgs.Empty);
+        OnSelectedObjectChanged?.Invoke(this, EventArgs.Empty);
+
+        if(selectedObject == null)
+        {
+            selectionType = SelectionType.NULL;
+        }
+        else
+        {
+            selectionType = SelectionType.Movement;
+        }
+
     }
 
     public bool HasSelectedObject()
@@ -154,6 +222,15 @@ public class GameManager : MonoBehaviour
     {
         tileObject = selectedObject;
         return HasSelectedObject();
+    }
+
+
+    private enum SelectionType
+    {
+        Movement,
+        FirstWeapon,
+        SecondWeapon,
+        NULL
     }
 
 

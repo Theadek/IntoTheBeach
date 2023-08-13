@@ -10,6 +10,9 @@ public class GameInput : MonoBehaviour
     public event EventHandler OnToggleDebugView;
     public event EventHandler OnRevertLastMove;
     public event EventHandler OnEndTurn;
+    public event EventHandler OnFirstWeaponUse;
+    public event EventHandler OnSecondWeaponUse;
+    public event EventHandler OnRepair;
 
     private Controls controls;
 
@@ -29,6 +32,24 @@ public class GameInput : MonoBehaviour
         controls.Player.Enable();
         controls.Player.RevertLastMove.performed += RevertLastMove_performed;
         controls.Player.EndTurn.performed += EndTurn_performed;
+        controls.Player.FirstWeapon.performed += FirstWeapon_performed;
+        controls.Player.SecondWeapon.performed += SecondWeapon_performed;
+        controls.Player.Repair.performed += Repair_performed;
+    }
+
+    private void Repair_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        OnRepair?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void SecondWeapon_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        OnSecondWeaponUse?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void FirstWeapon_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        OnFirstWeaponUse?.Invoke(this, EventArgs.Empty);
     }
 
     private void EndTurn_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -51,6 +72,9 @@ public class GameInput : MonoBehaviour
         controls.DebugActionMap.ToggleDebugView.performed -= ToggleDebugView_performed;
         controls.Player.RevertLastMove.performed -= RevertLastMove_performed;
         controls.Player.EndTurn.performed -= EndTurn_performed;
+        controls.Player.FirstWeapon.performed -= FirstWeapon_performed;
+        controls.Player.SecondWeapon.performed -= SecondWeapon_performed;
+        controls.Player.Repair.performed -= Repair_performed;
         controls.Dispose();
     }
 }

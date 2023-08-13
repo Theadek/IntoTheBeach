@@ -10,11 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 949c38818ec8302438a4518888220b67, type: 3}
-  m_Name: Fighter
+  m_Name: EnemyFighter
   m_EditorClassIdentifier: 
   name: Fighter
   health: 2
   movement: 4
-  isFlying: 0
-  prefab: {fileID: 554970028005878860, guid: 592cb7efda38e2642b3062436eb853a1, type: 3}
+  prefab: {fileID: 5384113217717596157, guid: f4b92f88be39d704fb02b5f9dc4d1b63, type: 3}
   availableAttacks: 00000000
+  movable: 1
+  pushable: 1
+  hasArmor: 0
+  hasShield: 0
+  explosive: 0
+  isFlying: 0

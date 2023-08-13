@@ -9,7 +9,7 @@ public class CharacterSO : ScriptableObject
     public int health;
     public int movement;
     public GameObject prefab;
-    public AvailableAttacks[] availableAttacks;
+    public BaseWeapon.Weapon[] availableAttacks;
 
 
     public bool movable;
@@ -18,12 +18,5 @@ public class CharacterSO : ScriptableObject
     public bool hasShield;
     public bool explosive;
     public bool isFlying;
-
-    public enum AvailableAttacks
-    {
-        Punch,
-        Shoot,
-        BossAttack
-    }
 
 }
