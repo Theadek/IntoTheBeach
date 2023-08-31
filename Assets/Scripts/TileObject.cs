@@ -144,7 +144,6 @@ public class TileObject : MonoBehaviour
         if (health <= 0)
         {
             health = 0;
-            GetDestroyed();
         }
         OnHealthChanged?.Invoke(this, EventArgs.Empty);
     }
@@ -161,7 +160,6 @@ public class TileObject : MonoBehaviour
         if (health <= 0)
         {
             health = 0;
-            GetDestroyed();
         }
         OnHealthChanged?.Invoke(this, EventArgs.Empty);
     }
@@ -184,7 +182,7 @@ public class TileObject : MonoBehaviour
         }
     }
 
-    protected void GetDestroyed()
+    public void GetDestroyed()
     {
         if (explosive)
         {

@@ -192,6 +192,7 @@ public class GameManager : MonoBehaviour
                 if (selectedObject.IsTileInRangeFirstWeapon(tile))
                 {
                     selectedObject.AttackTileFirstWeapon(tile);
+                    TileManager.Instance.CheckHealthToDestroyed();
                     SetSelectedObject(null);
                     ClearLastPlayerMovement();
                 }
@@ -201,6 +202,7 @@ public class GameManager : MonoBehaviour
                 if (selectedObject.IsTileInRangeSecondWeapon(tile))
                 {
                     selectedObject.AttackTileSecondWeapon(tile);
+                    TileManager.Instance.CheckHealthToDestroyed();
                     SetSelectedObject(null);
                     ClearLastPlayerMovement();
                 }

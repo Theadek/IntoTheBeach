@@ -184,6 +184,20 @@ public class TileManager : MonoBehaviour
         MoveTileObjectByOne(from.GetTile(), direction);
     }
 
+    public void CheckHealthToDestroyed()
+    {
+        foreach(Tile tile in tiles)
+        {
+            if(tile.TryGetTileObject(out TileObject tileobject))
+            {
+                if (tileobject.GetCurrentHealth() == 0)
+                {
+                    tileobject.GetDestroyed();
+                }
+            }
+
+        }
+    }
 
 
     // Alpha Testing Script -- TO REMOVE LATER
