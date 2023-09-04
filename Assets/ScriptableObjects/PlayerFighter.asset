@@ -16,7 +16,7 @@ MonoBehaviour:
   health: 3
   movement: 4
   prefab: {fileID: 3231576587770314998, guid: 629b0db20ed77cc4cbc32526d77d6ae9, type: 3}
-  availableAttacks: 00000000
+  availableAttacks: 0000000001000000
   movable: 1
   pushable: 1
   hasArmor: 0

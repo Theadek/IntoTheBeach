@@ -42,6 +42,8 @@ public abstract class BaseWeapon
         {
             case Weapon.FistPunch:
                 return new FistPunch();
+            case Weapon.DirectShot:
+                return new DirectShot();
             default:
                 return null;
         }

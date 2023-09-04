@@ -21,6 +21,24 @@ public class Helpers
         }
     }
 
+    public static Vector2Int GetVector2IntFromDirection(Direction direction)
+    {
+        switch (direction)
+        {
+            case Direction.North:
+                return new Vector2Int(1, 0);
+            case Direction.South:
+                return new Vector2Int(-1, 0);
+            case Direction.West:
+                return new Vector2Int(0, 1);
+            case Direction.East:
+                return new Vector2Int(0, -1);
+            default:
+                Debug.LogWarning("GetVector2IntFromDirection function got unknown Direction value!");
+                return Vector2Int.zero;
+        }
+    }
+
     public static bool TryGetDirection(Vector2Int from, Vector2Int to, out Direction direction)
     {
         Vector2Int directionVector = to - from;

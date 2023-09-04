@@ -143,6 +143,25 @@ public class TileManager : MonoBehaviour
         return false;
     }
 
+    public bool TryGetFirstTileObjectInDirection(Tile tile, Direction direction, out TileObject tileObject)
+    {
+        Tile currentTile = tile;
+        while(true)
+        {
+            if (!TryGetNeighborTile(currentTile, direction, out Tile neighborTile))
+            {
+                tileObject = null;
+                return false;
+            }
+            currentTile = neighborTile;
+            if (neighborTile.HasObjectOnThisTile())
+            {
+                tileObject = neighborTile.GetTileObject();
+                return true;
+            }
+        }
+    }
+
     public void MovePlayerTileObject(TileObject from, Tile to)
     {
         from.ObjectJustMoved();

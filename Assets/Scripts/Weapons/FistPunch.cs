@@ -14,7 +14,7 @@ public class FistPunch : BaseWeapon
         isPasive = false;
         upgrades = new List<Upgrade>
         {
-            new Upgrade(false, 1, "Deal additional DMG"),
+            new Upgrade(false, 3, "Deal additional 2 DMG"),
             new Upgrade(false, 2, "Dash To Target")
         };
     }
@@ -33,7 +33,7 @@ public class FistPunch : BaseWeapon
             {
                 int damageAmount = 1;
                 if (upgrades[0].enabled)
-                    damageAmount++;
+                    damageAmount+=2;
 
                 obj.GetDamaged(damageAmount);
                 obj.GetPushed(direction);
@@ -60,6 +60,7 @@ public class FistPunch : BaseWeapon
                     if (TileManager.Instance.TryGetNeighborTile(current, direction, out Tile neighbor))
                     {
                         possibleAttackPlaces.Add(neighbor);
+                        current = neighbor;
                         if (neighbor.HasObjectOnThisTile())
                         {
                             break;
