@@ -2,11 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DirectShot : BaseWeapon
+public class Valley : BaseWeapon
 {
-    public DirectShot()
+    public Valley()
     {
-        AttackDescription = "Shoot a bullet that deals 1 DMG";
+        AttackDescription = "Shoot a valley missle that deals 1 DMG";
         AttackHighlightPrefabN = GameAssets.i.fistPunchHighlightN;
         AttackHighlightPrefabS = GameAssets.i.fistPunchHighlightS;
         AttackHighlightPrefabE = GameAssets.i.fistPunchHighlightE;
@@ -14,8 +14,8 @@ public class DirectShot : BaseWeapon
         isPasive = false;
         upgrades = new List<Upgrade>
         {
-            new Upgrade(false, 2, "Deal additional DMG"),
-            new Upgrade(false, 3, "Deal additional DMG")
+            new Upgrade(false, 1, "No DMG to buildings"),
+            new Upgrade(false, 3, "Deal additional 2 DMG")
         };
     }
 
@@ -25,28 +25,32 @@ public class DirectShot : BaseWeapon
 
         if (Helpers.TryGetDirectionLong(from.GetXY(), tile.GetXY(), out Direction direction, out _))
         {
-            if(TileManager.Instance.TryGetFirstTileObjectInDirection(from, direction, out TileObject tileObject))
+            if (TileManager.Instance.TryGetFirstTileObjectInDirection(from, direction, out TileObject tileObject))
             {
-                //Shoot First Object
                 int damageAmount = 1;
-                if (upgrades[0].enabled)
-                    damageAmount++;
                 if (upgrades[1].enabled)
-                    damageAmount++;
+                    damageAmount += 2;
+
+                // TODO no damage to buildings
+                if (upgrades[0].enabled)
+                {
+                    // if(tile.IsBuilding())
+                        damageAmount = 0;
+                }
 
                 tileObject.GetDamaged(damageAmount);
-            }
-            else
-            {
-                // Shoot till the end of the board
-
-                // Shoot animation
-                // Fire on trees tile
+                for(Direction dir = Direction.North; dir != Direction.COUNT; dir++)
+                {
+                    if(TileManager.Instance.TryGetNeighborTileObject(tile, dir, out TileObject neighbor))
+                    {
+                        neighbor.GetPushed(dir);
+                    }
+                }
             }
         }
         else
         {
-            Debug.LogWarning($"DirectShot Attack should have happened, but something failed. {from.GetXY()} => {tile.GetXY()}");
+            Debug.LogWarning($"Valley Attack should have happened, but something failed. {from.GetXY()} => {tile.GetXY()}");
         }
 
     }
@@ -59,16 +63,21 @@ public class DirectShot : BaseWeapon
         for (Direction direction = Direction.North; direction < Direction.COUNT; direction++)
         {
             Tile current = from;
+            // Skip 1 tile
+            if (TileManager.Instance.TryGetNeighborTile(current, direction, out Tile neighbor))
+            {
+                current = neighbor;
+            }
+            else
+            {
+                continue;
+            }
             while (true)
             {
-                if (TileManager.Instance.TryGetNeighborTile(current, direction, out Tile neighbor))
+                if (TileManager.Instance.TryGetNeighborTile(current, direction, out neighbor))
                 {
                     possibleAttackPlaces.Add(neighbor);
                     current = neighbor;
-                    if (neighbor.HasObjectOnThisTile())
-                    {
-                        break;
-                    }
                 }
                 else
                 {

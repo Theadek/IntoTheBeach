@@ -44,6 +44,8 @@ public abstract class BaseWeapon
                 return new FistPunch();
             case Weapon.DirectShot:
                 return new DirectShot();
+            case Weapon.Volleys:
+                return new Valley();
             default:
                 return null;
         }
