@@ -18,15 +18,16 @@ public class PathFinder : MonoBehaviour
         {
             Instance = this;
         }
-        possibleMoves = null;
+        ClearPossibleMoves();
     }
 
     private void Start()
     {
-        GameManager.Instance.OnSelectedObjectChanged += GameManager_OnSelectedObject;
+        GameManager.Instance.OnSelectedObjectChanged += GameManager_OnSelectedObjectChanged;
     }
 
-    private void GameManager_OnSelectedObject(object sender, System.EventArgs e)
+
+    private void GameManager_OnSelectedObjectChanged(object sender, System.EventArgs e)
     {
         if (GameManager.Instance.TryGetSelectedObject(out TileObject tileObject))
         {

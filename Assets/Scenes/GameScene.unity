@@ -492,6 +492,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   highlightTilePrefab: {fileID: 139475576924753164, guid: b1b1b4b4bfc97284786ba61a4413c0de, type: 3}
+  highlightAttackTilePrefab: {fileID: 139475576924753164, guid: b3d0179e9b151d4488f16d8e91323a2f, type: 3}
 --- !u!1 &1750448468
 GameObject:
   m_ObjectHideFlags: 0

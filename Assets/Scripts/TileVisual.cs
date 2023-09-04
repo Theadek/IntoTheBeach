@@ -21,6 +21,7 @@ public class TileVisual : MonoBehaviour
 
     private void Tile_OnMouseEnterEvent(object sender, System.EventArgs e)
     {
-        spriteRenderer.color = Color.yellow;
+        if(!GameManager.Instance.IsSelectedFirstWeapon() && !GameManager.Instance.IsSelectedSecondWeapon())
+            spriteRenderer.color = Color.yellow;
     }
 }

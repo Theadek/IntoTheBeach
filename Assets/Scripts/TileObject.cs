@@ -322,6 +322,11 @@ public class TileObject : MonoBehaviour
     {
         return weapons[0].isPasive;
     }
+
+    public BaseWeapon GetFirstWeapon()
+    {
+        return weapons[0];
+    }
     // Second Weapon
     public bool HasSecondWeapon()
     {
@@ -344,6 +349,10 @@ public class TileObject : MonoBehaviour
     public bool IsSecondWeaponPasive()
     {
         return weapons[0].isPasive;
+    }
+    public BaseWeapon GetSecondWeapon()
+    {
+        return weapons[1];
     }
     #endregion
 

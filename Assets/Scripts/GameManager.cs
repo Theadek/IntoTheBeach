@@ -40,7 +40,9 @@ public class GameManager : MonoBehaviour
 
     private void GameInput_OnSecondWeaponUse(object sender, EventArgs e)
     {
-        if (!IsPlayerTurn() || !HasSelectedObject())
+        if (!IsPlayerTurn())
+            return;
+        if (!HasSelectedObject())
             return;
         if (selectedObject.GetHasDoneAction())
             return;
@@ -49,13 +51,23 @@ public class GameManager : MonoBehaviour
         if (selectedObject.IsSecondWeaponPasive())
             return;
 
-        selectionType = SelectionType.SecondWeapon;
-        OnSelectedTypeChanged?.Invoke(this, EventArgs.Empty);
+        if (IsSelectedSecondWeapon())
+        {
+            SetSelectedObject(selectedObject);
+        }
+        else
+        {
+            selectionType = SelectionType.SecondWeapon;
+            OnSelectedTypeChanged?.Invoke(this, EventArgs.Empty);
+        }
+
     }
 
     private void GameInput_OnFirstWeaponUse(object sender, EventArgs e)
     {
-        if (!IsPlayerTurn() || !HasSelectedObject())
+        if (!IsPlayerTurn())
+            return;
+        if (!HasSelectedObject())
             return;
         if (selectedObject.GetHasDoneAction())
             return;
@@ -64,8 +76,16 @@ public class GameManager : MonoBehaviour
         if (selectedObject.IsFirstWeaponPasive())
             return;
 
-        selectionType = SelectionType.FirstWeapon;
-        OnSelectedTypeChanged?.Invoke(this, EventArgs.Empty);
+        if (IsSelectedFirstWeapon())
+        {
+            SetSelectedObject(selectedObject);
+        }
+        else
+        {
+            selectionType = SelectionType.FirstWeapon;
+            OnSelectedTypeChanged?.Invoke(this, EventArgs.Empty);
+        }
+
     }
 
     private void GameInput_OnRepair(object sender, EventArgs e)
@@ -180,6 +200,10 @@ public class GameManager : MonoBehaviour
                             SaveLastPlayerMovement();
                             SetSelectedObject(selectedObject);
                         }
+                        else
+                        {
+                            SetSelectedObject(null);
+                        }
                     }
                     else
                     {
@@ -196,6 +220,10 @@ public class GameManager : MonoBehaviour
                     SetSelectedObject(null);
                     ClearLastPlayerMovement();
                 }
+                else
+                {
+                    SetSelectedObject(null);
+                }
             }
             else if(selectionType == SelectionType.SecondWeapon)
             {
@@ -205,6 +233,10 @@ public class GameManager : MonoBehaviour
                     TileManager.Instance.CheckHealthToDestroyed();
                     SetSelectedObject(null);
                     ClearLastPlayerMovement();
+                }
+                else
+                {
+                    SetSelectedObject(null);
                 }
             }
         }
@@ -226,7 +258,6 @@ public class GameManager : MonoBehaviour
     public void SetSelectedObject(TileObject selectedObject)
     {
         this.selectedObject = selectedObject;
-        OnSelectedObjectChanged?.Invoke(this, EventArgs.Empty);
 
         if(selectedObject == null)
         {
@@ -237,6 +268,8 @@ public class GameManager : MonoBehaviour
             selectionType = SelectionType.Movement;
         }
 
+        OnSelectedObjectChanged?.Invoke(this, EventArgs.Empty);
+        OnSelectedTypeChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public bool HasSelectedObject()
@@ -258,6 +291,10 @@ public class GameManager : MonoBehaviour
         SecondWeapon,
         NULL
     }
+
+    public bool IsSelectedMovement() => selectionType == SelectionType.Movement;
+    public bool IsSelectedFirstWeapon() => selectionType == SelectionType.FirstWeapon;
+    public bool IsSelectedSecondWeapon() => selectionType == SelectionType.SecondWeapon;
 
 
     private enum GameState
