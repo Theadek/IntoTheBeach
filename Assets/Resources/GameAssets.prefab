@@ -48,3 +48,5 @@ MonoBehaviour:
   fistPunchHighlightS: {fileID: 7616251146818563061, guid: f434ea6edc5e5454393dedb1911b99ab, type: 3}
   fistPunchHighlightE: {fileID: 1754381836687139344, guid: 468c0eefe060be14ab92eb271e5b06af, type: 3}
   fistPunchHighlightW: {fileID: 4002124716472008873, guid: 01ee964a30e372d419e3949fded7b1e8, type: 3}
+  PushHighlightAround: {fileID: 4002124716472008873, guid: 3159c9d685cf87a41a75e644f323b1f6, type: 3}
+  Dot: {fileID: 5845178389742681359, guid: 09b359721b3ab1344906ed379e03437e, type: 3}

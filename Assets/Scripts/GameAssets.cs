@@ -20,4 +20,6 @@ public class GameAssets : MonoBehaviour
     public GameObject fistPunchHighlightS;
     public GameObject fistPunchHighlightE;
     public GameObject fistPunchHighlightW;
+    public GameObject PushHighlightAround;
+    public GameObject Dot;
 }

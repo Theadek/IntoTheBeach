@@ -343,4 +343,12 @@ public class GameManager : MonoBehaviour
     {
         lastMovements.Clear();
     }
+
+
+    //DEBUG
+
+    public GameObject MyInstantiate(GameObject prefab, Vector3 position, Quaternion rotation, Transform parent)
+    {
+        return Instantiate(prefab, position, rotation, parent);
+    }
 }

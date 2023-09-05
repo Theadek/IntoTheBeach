@@ -84,26 +84,7 @@ public class PathFinderVisualArrows : MonoBehaviour
                 return;
             }
 
-            var currentTilePosition = TileManager.Instance.GetGridPosition(e._xy);
-            Helpers.TryGetDirectionLong(tileObject.GetTile().GetXY(), e._xy, out Direction direction, out _);
-            GameObject prefab;
-            switch(direction)
-            {
-                case Direction.North:
-                    prefab = tileObject.GetFirstWeapon().AttackHighlightPrefabN;
-                    break;
-                case Direction.South:
-                    prefab = tileObject.GetFirstWeapon().AttackHighlightPrefabS;
-                    break;
-                case Direction.West:
-                    prefab = tileObject.GetFirstWeapon().AttackHighlightPrefabW;
-                    break;
-                case Direction.East:
-                    prefab = tileObject.GetFirstWeapon().AttackHighlightPrefabE;
-                    break;
-                default: return;
-            }
-            Instantiate(prefab, currentTilePosition, Quaternion.identity, transform);
+            tileObject.GetFirstWeapon().DisplayEffectOnTile(tileObject.GetTile(), TileManager.Instance.GetTile(e._xy), transform);
         }
         else if (GameManager.Instance.IsSelectedSecondWeapon())
         {
@@ -118,26 +99,7 @@ public class PathFinderVisualArrows : MonoBehaviour
                 return;
             }
 
-            var currentTilePosition = TileManager.Instance.GetGridPosition(e._xy);
-            Helpers.TryGetDirectionLong(tileObject.GetTile().GetXY(), e._xy, out Direction direction, out _);
-            GameObject prefab;
-            switch (direction)
-            {
-                case Direction.North:
-                    prefab = tileObject.GetSecondWeapon().AttackHighlightPrefabN;
-                    break;
-                case Direction.South:
-                    prefab = tileObject.GetSecondWeapon().AttackHighlightPrefabS;
-                    break;
-                case Direction.West:
-                    prefab = tileObject.GetSecondWeapon().AttackHighlightPrefabW;
-                    break;
-                case Direction.East:
-                    prefab = tileObject.GetSecondWeapon().AttackHighlightPrefabE;
-                    break;
-                default: return;
-            }
-            Instantiate(prefab, currentTilePosition, Quaternion.identity, transform);
+            tileObject.GetSecondWeapon().DisplayEffectOnTile(tileObject.GetTile(), TileManager.Instance.GetTile(e._xy), transform);
         }
 
     }

@@ -4,13 +4,14 @@ using UnityEngine;
 
 public class Valley : BaseWeapon
 {
+    GameObject AttackHighlightPrefab;
+    GameObject DotPrefab;
     public Valley()
     {
         AttackDescription = "Shoot a valley missle that deals 1 DMG";
-        AttackHighlightPrefabN = GameAssets.i.fistPunchHighlightN;
-        AttackHighlightPrefabS = GameAssets.i.fistPunchHighlightS;
-        AttackHighlightPrefabE = GameAssets.i.fistPunchHighlightE;
-        AttackHighlightPrefabW = GameAssets.i.fistPunchHighlightW;
+        AttackHighlightPrefab = GameAssets.i.PushHighlightAround;
+        DotPrefab = GameAssets.i.Dot;
+
         isPasive = false;
         upgrades = new List<Upgrade>
         {
@@ -87,6 +88,46 @@ public class Valley : BaseWeapon
         }
 
         return possibleAttackPlaces;
+    }
+
+    public override void DisplayEffectOnTile(Tile from, Tile tile, Transform parent)
+    {
+        if (Helpers.TryGetDirectionLong(from.GetXY(), tile.GetXY(), out Direction direction, out int distance))
+        {
+            // Dots
+
+            float riseAmount = 0.3f;
+            float riseOffset = 0.3f;
+            Vector3 startPoint = from.transform.position;
+            Vector3 stepDirection = tile.transform.position - startPoint;
+
+            int amountOfDots = 7;
+            float stepAmount = stepDirection.magnitude / (amountOfDots + 2);
+            stepDirection = stepDirection.normalized;
+            stepDirection *= stepAmount;
+            for(int i = 1; i<=amountOfDots; i++)
+            {
+                var dotPosition = startPoint + stepDirection * i;
+                if(i <= amountOfDots / 2)
+                {
+                    dotPosition += Vector3.up * (riseAmount * i);
+                }
+                else
+                {
+                    dotPosition += Vector3.up * (riseAmount * (amountOfDots - i));
+                }
+                dotPosition += Vector3.up * riseOffset;
+                GameManager.Instance.MyInstantiate(DotPrefab, dotPosition, Quaternion.identity, parent);
+            }
+
+            // Push arrows
+            var position = TileManager.Instance.GetGridPosition(tile.GetXY());
+            GameManager.Instance.MyInstantiate(AttackHighlightPrefab, position, Quaternion.identity, parent);
+        }
+        else
+        {
+            Debug.LogWarning($"ShowHighlights should have happened, but something failed. {from.GetXY()} => {tile.GetXY()}");
+        }
     }
 
     public override bool IsTileInRange(Tile from, Tile tile)

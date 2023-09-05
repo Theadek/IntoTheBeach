@@ -162,6 +162,24 @@ public class TileManager : MonoBehaviour
         }
     }
 
+    public Tile GetLastTileInDirection(Tile tile, Direction direction)
+    {
+        Tile currentTile = tile;
+        while (true)
+        {
+            if (TryGetNeighborTile(currentTile, direction, out Tile neighborTile))
+            {
+                currentTile = neighborTile;
+
+            }
+            else
+            {
+                break;
+            }
+        }
+        return currentTile;
+    }
+
     public void MovePlayerTileObject(TileObject from, Tile to)
     {
         from.ObjectJustMoved();
@@ -215,6 +233,23 @@ public class TileManager : MonoBehaviour
                 }
             }
 
+        }
+    }
+
+    public Vector3 GetVector3BetweenTiles(Direction direction)
+    {
+        switch (direction)
+        {
+            case Direction.North:
+                return (tiles[1, 0].transform.position - tiles[0, 0].transform.position);
+            case Direction.South:
+                return (tiles[0, 0].transform.position - tiles[1, 0].transform.position);
+            case Direction.West:
+                return (tiles[0, 1].transform.position - tiles[0, 0].transform.position);
+            case Direction.East:
+                return (tiles[0, 0].transform.position - tiles[0, 1].transform.position);
+            default:
+                return Vector3.zero;
         }
     }
 

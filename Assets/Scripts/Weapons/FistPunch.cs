@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class FistPunch : BaseWeapon
 {
+    GameObject AttackHighlightPrefabN;
+    GameObject AttackHighlightPrefabS;
+    GameObject AttackHighlightPrefabE;
+    GameObject AttackHighlightPrefabW;
     public FistPunch()
     {
         AttackDescription = "Deal 1 DMG and push enemy 1 tile back";
@@ -92,37 +96,37 @@ public class FistPunch : BaseWeapon
         return GetPossibleAttackPlaces(from).Contains(tile);
     }
 
-    //public override void GetHighlights(Tile from, Tile tile, Transform parent)
-    //{
-    //    if(Helpers.TryGetDirectionLong(from.GetXY(), tile.GetXY(), out Direction direction, out int distance))
-    //    {
-    //        GameObject AttackHighlightPrefab;
-    //        //AtackHighlightPrefab
-    //        switch (direction)
-    //        {
-    //            case Direction.North:
-    //                AttackHighlightPrefab = AttackHighlightPrefabN;
-    //                break;
-    //            case Direction.South:
-    //                AttackHighlightPrefab = AttackHighlightPrefabS;
-    //                break;
-    //            case Direction.East:
-    //                AttackHighlightPrefab = AttackHighlightPrefabE;
-    //                break;
-    //            case Direction.West:
-    //                AttackHighlightPrefab = AttackHighlightPrefabW;
-    //                break;
-    //            default:
-    //                Debug.LogWarning($"ShowHighlights should have happened, but couldn't get direction. {from.GetXY()} => {tile.GetXY()}");
-    //                return;
-    //        }
+    public override void DisplayEffectOnTile(Tile from, Tile tile, Transform parent)
+    {
+        if (Helpers.TryGetDirectionLong(from.GetXY(), tile.GetXY(), out Direction direction, out int distance))
+        {
+            GameObject AttackHighlightPrefab;
+            //AtackHighlightPrefab
+            switch (direction)
+            {
+                case Direction.North:
+                    AttackHighlightPrefab = AttackHighlightPrefabN;
+                    break;
+                case Direction.South:
+                    AttackHighlightPrefab = AttackHighlightPrefabS;
+                    break;
+                case Direction.East:
+                    AttackHighlightPrefab = AttackHighlightPrefabE;
+                    break;
+                case Direction.West:
+                    AttackHighlightPrefab = AttackHighlightPrefabW;
+                    break;
+                default:
+                    Debug.LogWarning($"ShowHighlights should have happened, but couldn't get direction. {from.GetXY()} => {tile.GetXY()}");
+                    return;
+            }
 
-    //        var position = TileManager.Instance.GetGridPosition(tile.GetXY());
-    //        Instantiate(AttackHighlightPrefab, position, Quaternion.identity, parent);
-    //    }
-    //    else
-    //    {
-    //        Debug.LogWarning($"ShowHighlights should have happened, but something failed. {from.GetXY()} => {tile.GetXY()}");
-    //    }
-    //}
+            var position = TileManager.Instance.GetGridPosition(tile.GetXY());
+            GameManager.Instance.MyInstantiate(AttackHighlightPrefab, position, Quaternion.identity, parent);
+        }
+        else
+        {
+            Debug.LogWarning($"ShowHighlights should have happened, but something failed. {from.GetXY()} => {tile.GetXY()}");
+        }
+    }
 }
