@@ -26,7 +26,7 @@ public class Valley : BaseWeapon
 
         if (Helpers.TryGetDirectionLong(from.GetXY(), tile.GetXY(), out Direction direction, out _))
         {
-            if (TileManager.Instance.TryGetFirstTileObjectInDirection(from, direction, out TileObject tileObject))
+            if (tile.TryGetTileObject(out TileObject tileObject))
             {
                 int damageAmount = 1;
                 if (upgrades[1].enabled)
@@ -36,16 +36,16 @@ public class Valley : BaseWeapon
                 if (upgrades[0].enabled)
                 {
                     // if(tile.IsBuilding())
-                        damageAmount = 0;
+                    //    damageAmount = 0;
                 }
 
                 tileObject.GetDamaged(damageAmount);
-                for(Direction dir = Direction.North; dir != Direction.COUNT; dir++)
+            }
+            for(Direction dir = Direction.North; dir != Direction.COUNT; dir++)
+            {
+                if(TileManager.Instance.TryGetNeighborTileObject(tile, dir, out TileObject neighbor))
                 {
-                    if(TileManager.Instance.TryGetNeighborTileObject(tile, dir, out TileObject neighbor))
-                    {
-                        neighbor.GetPushed(dir);
-                    }
+                    neighbor.GetPushed(dir);
                 }
             }
         }
@@ -60,7 +60,6 @@ public class Valley : BaseWeapon
     {
         List<Tile> possibleAttackPlaces = new List<Tile>();
 
-        //Dash to Enemy
         for (Direction direction = Direction.North; direction < Direction.COUNT; direction++)
         {
             Tile current = from;
