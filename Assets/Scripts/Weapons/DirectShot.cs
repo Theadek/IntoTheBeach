@@ -95,7 +95,7 @@ public class DirectShot : BaseWeapon
             {
                 Tile lastTile = TileManager.Instance.GetLastTileInDirection(from, direction);
                 lastPlaceLocation = lastTile.transform.position;
-                lastPlaceLocation += TileManager.Instance.GetVector3BetweenTiles(direction);
+                //lastPlaceLocation += TileManager.Instance.GetVector3BetweenTiles(direction);
                 Helpers.TryGetDirectionLong(from.GetXY(), lastTile.GetXY(), out _, out amountOfDots);
                 amountOfDots++;
             }
