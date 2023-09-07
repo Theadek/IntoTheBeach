@@ -120,9 +120,11 @@ public class FistPunch : BaseWeapon
                     Debug.LogWarning($"ShowHighlights should have happened, but couldn't get direction. {from.GetXY()} => {tile.GetXY()}");
                     return;
             }
-
-            var position = TileManager.Instance.GetGridPosition(tile.GetXY());
-            GameManager.Instance.MyInstantiate(AttackHighlightPrefab, position, Quaternion.identity, parent);
+            if (TileManager.Instance.TryGetNeighborTile(tile, direction, out _))
+            {
+                var position = TileManager.Instance.GetGridPosition(tile.GetXY());
+                GameManager.Instance.MyInstantiate(AttackHighlightPrefab, position, Quaternion.identity, parent);
+            }
         }
         else
         {

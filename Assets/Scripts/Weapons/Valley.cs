@@ -4,12 +4,18 @@ using UnityEngine;
 
 public class Valley : BaseWeapon
 {
-    GameObject AttackHighlightPrefab;
+    GameObject AttackHighlightPrefabN;
+    GameObject AttackHighlightPrefabS;
+    GameObject AttackHighlightPrefabE;
+    GameObject AttackHighlightPrefabW;
     GameObject DotPrefab;
     public Valley()
     {
         AttackDescription = "Shoot a valley missle that deals 1 DMG";
-        AttackHighlightPrefab = GameAssets.i.PushHighlightAround;
+        AttackHighlightPrefabN = GameAssets.i.fistPunchHighlightN;
+        AttackHighlightPrefabS = GameAssets.i.fistPunchHighlightS;
+        AttackHighlightPrefabE = GameAssets.i.fistPunchHighlightE;
+        AttackHighlightPrefabW = GameAssets.i.fistPunchHighlightW;
         DotPrefab = GameAssets.i.Dot;
 
         isPasive = false;
@@ -120,8 +126,15 @@ public class Valley : BaseWeapon
             }
 
             // Push arrows
-            var position = TileManager.Instance.GetGridPosition(tile.GetXY());
-            GameManager.Instance.MyInstantiate(AttackHighlightPrefab, position, Quaternion.identity, parent);
+            for(Direction dir = Direction.North; dir < Direction.COUNT; dir++)
+            {
+                if(TileManager.Instance.TryGetNeighborTile(tile, dir, out _))
+                {
+                    var position = TileManager.Instance.GetGridPosition(tile.GetXY());
+                    GameManager.Instance.MyInstantiate(GetHighlightPrefabFromDirection(dir), position, Quaternion.identity, parent);
+                }
+            }
+
         }
         else
         {
@@ -132,5 +145,22 @@ public class Valley : BaseWeapon
     public override bool IsTileInRange(Tile from, Tile tile)
     {
         return GetPossibleAttackPlaces(from).Contains(tile);
+    }
+
+    private GameObject GetHighlightPrefabFromDirection(Direction direction)
+    {
+        switch (direction)
+        {
+            case Direction.North:
+                return AttackHighlightPrefabN;
+            case Direction.South:
+                return AttackHighlightPrefabS;
+            case Direction.East:
+                return AttackHighlightPrefabE;
+            case Direction.West:
+                return AttackHighlightPrefabW;
+            default:
+                return null;
+        }
     }
 }
