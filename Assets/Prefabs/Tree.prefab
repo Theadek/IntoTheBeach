@@ -46,7 +46,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   characterSO: {fileID: 11400000, guid: 1cbe5177b28dae64a9939dbbfeb10288, type: 2}
-  objectType: 2
+  objectType: 3
 --- !u!1 &5506886060377281050
 GameObject:
   m_ObjectHideFlags: 0

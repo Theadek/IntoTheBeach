@@ -16,10 +16,10 @@ public class GameAssets : MonoBehaviour
 
     }
 
-    public GameObject fistPunchHighlightN;
-    public GameObject fistPunchHighlightS;
-    public GameObject fistPunchHighlightE;
-    public GameObject fistPunchHighlightW;
-    public GameObject PushHighlightAround;
+    public GameObject pushN;
+    public GameObject pushS;
+    public GameObject pushE;
+    public GameObject pushW;
+    public GameObject tileHighlight;
     public GameObject Dot;
 }

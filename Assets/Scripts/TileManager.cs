@@ -197,13 +197,10 @@ public class TileManager : MonoBehaviour
     }
 
 
-
-
-
-
     public void MoveTileObject(TileObject from, Tile to)
     {
         to.TrySetTileObject(from);
+        GameManager.Instance.RecalculateEnemyAttacks();
     }
     public void MoveTileObject(Tile from, Tile to)
     {
@@ -232,8 +229,8 @@ public class TileManager : MonoBehaviour
                     tileobject.GetDestroyed();
                 }
             }
-
         }
+        GameManager.Instance.RecalculateEnemyAttacks();
     }
 
     public Vector3 GetVector3BetweenTiles(Direction direction)
@@ -281,8 +278,9 @@ public class TileManager : MonoBehaviour
                 x = Random.Range(0, tileCount[0] - 1);
                 y = Random.Range(0, tileCount[1] - 1);
             } while (tiles[x, y].HasObjectOnThisTile());
-            var newPlayerObject = TileObject.CreateTileObject(tiles[x, y].GetComponent<Tile>(), enemyFighterPrefab.GetCharacterSO());
-            tiles[x, y].GetComponent<Tile>().TrySetTileObject(newPlayerObject);
+            var newEnemyObject = TileObject.CreateTileObject(tiles[x, y].GetComponent<Tile>(), enemyFighterPrefab.GetCharacterSO());
+            tiles[x, y].GetComponent<Tile>().TrySetTileObject(newEnemyObject);
+            GameManager.Instance.RegisterEnemy(newEnemyObject);
         }
 
 

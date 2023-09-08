@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 
@@ -19,7 +20,7 @@ public class TileObject : MonoBehaviour
     protected int health;
     protected int healthMax;
     protected int movement;
-    [SerializeField] protected ObjectType objectType;
+    [SerializeField] protected TileObjectType objectType;
 
     // Abilities
     protected bool hasDoneAction;
@@ -208,6 +209,7 @@ public class TileObject : MonoBehaviour
                 newTileObject.GetDamaged(explosionDamage);
             }
         }
+        GameManager.Instance.UnregisterEnemy(this);
         tile.RemoveTileObject();
         Destroy(gameObject);
     }
@@ -224,32 +226,21 @@ public class TileObject : MonoBehaviour
 
     #region enum ObjectType
     // Enum Object Type
-    public enum ObjectType
+    public enum TileObjectType
     {
         Player,
         Enemy,
-        Neutral,
+        Building,
+        Terrain
     }
 
-    public bool IsPlayerType()
-    {
-        return objectType == ObjectType.Player;
-    }
+    public bool IsPlayerType() => objectType == TileObjectType.Player;
+    public bool IsEnemyType() => objectType == TileObjectType.Enemy;
+    public bool IsBuildingType() => objectType == TileObjectType.Building;
+    public bool IsTerrainType() => objectType == TileObjectType.Terrain;
 
-    public bool IsEnemyType()
-    {
-        return objectType == ObjectType.Enemy;
-    }
-
-    public ObjectType GetObjectType()
-    {
-        return objectType;
-    }
-
-    public bool HasSameType(TileObject otherTileObject)
-    {
-        return objectType == otherTileObject.objectType; //TODO shouldn't be otherTileObject.GetObjectType() ???
-    }
+    public TileObjectType GetObjectType() => objectType;
+    public bool HasSameType(TileObject otherTileObject) => objectType == otherTileObject.objectType;
     #endregion
 
     #region Movement Reverter
@@ -354,6 +345,11 @@ public class TileObject : MonoBehaviour
     {
         return weapons[1];
     }
+
+    public List<BaseWeapon> GetWeapons()
+    {
+        return weapons;
+    }
     #endregion
 
     // Static TileObject Creation
@@ -365,4 +361,5 @@ public class TileObject : MonoBehaviour
         newTileObject.SetCharacterSO(characterSO);
         return newTileObject;
     }
+
 }

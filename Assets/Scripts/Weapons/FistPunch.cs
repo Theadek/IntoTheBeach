@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public class FistPunch : BaseWeapon
 {
+    GameObject AttackHighlightPrefab;
     GameObject AttackHighlightPrefabN;
     GameObject AttackHighlightPrefabS;
     GameObject AttackHighlightPrefabE;
@@ -11,10 +13,11 @@ public class FistPunch : BaseWeapon
     public FistPunch()
     {
         AttackDescription = "Deal 1 DMG and push enemy 1 tile back";
-        AttackHighlightPrefabN = GameAssets.i.fistPunchHighlightN;
-        AttackHighlightPrefabS = GameAssets.i.fistPunchHighlightS;
-        AttackHighlightPrefabE = GameAssets.i.fistPunchHighlightE;
-        AttackHighlightPrefabW = GameAssets.i.fistPunchHighlightW;
+        AttackHighlightPrefab = GameAssets.i.tileHighlight;
+        AttackHighlightPrefabN = GameAssets.i.pushN;
+        AttackHighlightPrefabS = GameAssets.i.pushS;
+        AttackHighlightPrefabE = GameAssets.i.pushE;
+        AttackHighlightPrefabW = GameAssets.i.pushW;
         isPasive = false;
         upgrades = new List<Upgrade>
         {
@@ -100,35 +103,107 @@ public class FistPunch : BaseWeapon
     {
         if (Helpers.TryGetDirectionLong(from.GetXY(), tile.GetXY(), out Direction direction, out int distance))
         {
-            GameObject AttackHighlightPrefab;
+            GameObject AttackHighlightPrefabDir = null;
             //AtackHighlightPrefab
             switch (direction)
             {
                 case Direction.North:
-                    AttackHighlightPrefab = AttackHighlightPrefabN;
+                    AttackHighlightPrefabDir = AttackHighlightPrefabN;
                     break;
                 case Direction.South:
-                    AttackHighlightPrefab = AttackHighlightPrefabS;
+                    AttackHighlightPrefabDir = AttackHighlightPrefabS;
                     break;
                 case Direction.East:
-                    AttackHighlightPrefab = AttackHighlightPrefabE;
+                    AttackHighlightPrefabDir = AttackHighlightPrefabE;
                     break;
                 case Direction.West:
-                    AttackHighlightPrefab = AttackHighlightPrefabW;
+                    AttackHighlightPrefabDir = AttackHighlightPrefabW;
                     break;
                 default:
                     Debug.LogWarning($"ShowHighlights should have happened, but couldn't get direction. {from.GetXY()} => {tile.GetXY()}");
                     return;
             }
+            var position = TileManager.Instance.GetGridPosition(tile.GetXY());
+            GameManager.Instance.MyInstantiate(AttackHighlightPrefab, position, Quaternion.identity, parent);
             if (TileManager.Instance.TryGetNeighborTile(tile, direction, out _))
             {
-                var position = TileManager.Instance.GetGridPosition(tile.GetXY());
-                GameManager.Instance.MyInstantiate(AttackHighlightPrefab, position, Quaternion.identity, parent);
+                GameManager.Instance.MyInstantiate(AttackHighlightPrefabDir, position, Quaternion.identity, parent);
             }
         }
         else
         {
             Debug.LogWarning($"ShowHighlights should have happened, but something failed. {from.GetXY()} => {tile.GetXY()}");
         }
+    }
+
+    public override int EnemyCalculateMovementScore(Tile tile)
+    {
+        int score = 0;
+        for (Direction direction = Direction.North; direction < Direction.COUNT; direction++)
+        {
+            TileObject target;
+            if (upgrades[1].enabled)
+            {
+                if(!TileManager.Instance.TryGetFirstTileObjectInDirection(tile, direction, out target))
+                {
+                    continue;
+                }
+
+            }
+            else
+            {
+                if (!TileManager.Instance.TryGetNeighborTileObject(tile, direction, out target))
+                {
+                    continue;
+                }
+            }
+            if (target.IsPlayerType() || target.IsBuildingType()) score += 10;
+            // TODO if tile is attacked by other Enemy then -20???
+        }
+        return score;
+    }
+
+    public override int EnemyCalculateAttackScore(Tile tile)
+    {
+        if(tile.TryGetTileObject(out TileObject target))
+        {
+            if (target.IsEnemyType()) return -9999;
+            if (target.IsPlayerType() || target.IsBuildingType()) return 10;
+            if (target.IsTerrainType()) return 1;
+        }
+        return -9999;
+    }
+
+    public override Tile EnemyRecalculateAttackPlace(Tile fromTile, Tile toTile, Tile previousAttackTile)
+    {
+        //Get AttackDirection
+        Helpers.TryGetDirectionLong(fromTile.GetXY(), previousAttackTile.GetXY(), out Direction direction, out _);
+
+        if (upgrades[1].enabled)
+        {
+            //Dash to Enemy
+            if (TileManager.Instance.TryGetFirstTileObjectInDirection(toTile, direction, out TileObject target))
+            {
+                return target.GetTile();
+            }
+            else
+            {
+                return TileManager.Instance.GetLastTileInDirection(toTile, direction);
+            }
+        }
+        else
+        {
+            if (fromTile == toTile) return previousAttackTile;
+            if (TileManager.Instance.TryGetNeighborTile(toTile, direction, out Tile neighborTile))
+            {
+                return neighborTile;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+
     }
 }

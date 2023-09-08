@@ -19,6 +19,8 @@ public class GameManager : MonoBehaviour
 
     private Stack<TileObject> lastMovements = new Stack<TileObject>();
 
+    private List<TileObject> Enemies = new List<TileObject>();
+
     private void Awake()
     {
         if (Instance == null)
@@ -38,6 +40,7 @@ public class GameManager : MonoBehaviour
         GameInput.Instance.OnSecondWeaponUse += GameInput_OnSecondWeaponUse;
     }
 
+    #region OnEvents
     private void GameInput_OnSecondWeaponUse(object sender, EventArgs e)
     {
         if (!IsPlayerTurn())
@@ -119,6 +122,8 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    #endregion
+
     private void Update()
     {
         switch(gamestate)
@@ -129,6 +134,18 @@ public class GameManager : MonoBehaviour
                 break;
             case GameState.EnemyMove:
                 // TODO - Enemies should find places to move
+                // 1) Enemies Moves
+                foreach(TileObject enemy in Enemies)
+                {
+                    TileManager.Instance.MoveTileObject(
+                        enemy.GetTile(),
+                        enemy.GetComponent<EnemyAI>().CalculateMovement());
+                }
+                // 2) Enemies Telegraph Attacks
+                foreach (TileObject enemy in Enemies)
+                {
+                    enemy.GetComponent<EnemyAI>().CalculateAttack();
+                }
                 ChangeGameState(GameState.EnemyPrepareEmerge);
                 break;
             case GameState.EnemyPrepareEmerge:
@@ -136,8 +153,7 @@ public class GameManager : MonoBehaviour
                 ChangeGameState(GameState.PlayerTurn);
                 break;
             case GameState.PlayerTurn:
-                // TODO - attack (not revertable);
-                //        one time revert whole turn
+                // TODO - one time revert whole turn
 
                 //Waiting for Player Input to finish Player Turn
                 break;
@@ -147,6 +163,12 @@ public class GameManager : MonoBehaviour
                 break;
             case GameState.EnemyAttack:
                 // TODO - Enemies finish telegraphed attacks
+                foreach (TileObject enemy in Enemies)
+                {
+                    enemy.GetComponent<EnemyAI>().Attack();
+                    TileManager.Instance.CheckHealthToDestroyed();
+                    RecalculateEnemyAttacks();
+                }
                 ChangeGameState(GameState.EnemyEmerge);
                 break;
             case GameState.EnemyEmerge:
@@ -344,11 +366,28 @@ public class GameManager : MonoBehaviour
         lastMovements.Clear();
     }
 
-
     //DEBUG
 
     public GameObject MyInstantiate(GameObject prefab, Vector3 position, Quaternion rotation, Transform parent)
     {
         return Instantiate(prefab, position, rotation, parent);
+    }
+
+    public void RegisterEnemy(TileObject enemy)
+    {
+        Enemies.Add(enemy);
+    }
+
+    public void UnregisterEnemy(TileObject enemy)
+    {
+        Enemies.Remove(enemy);
+    }
+
+    public void RecalculateEnemyAttacks()
+    {
+        foreach(TileObject enemy in Enemies)
+        {
+            enemy.GetComponent<EnemyAI>().RecalculateAttack();
+        }
     }
 }

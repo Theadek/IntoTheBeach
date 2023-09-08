@@ -10,6 +10,9 @@ public abstract class BaseWeapon
     public abstract bool IsTileInRange(Tile from, Tile tile);
     public abstract void AttackTile(Tile from, Tile tile);
     public abstract void DisplayEffectOnTile(Tile from, Tile tile, Transform parent);
+    public abstract int EnemyCalculateMovementScore(Tile tile);
+    public abstract int EnemyCalculateAttackScore(Tile tile);
+    public abstract Tile EnemyRecalculateAttackPlace(Tile fromTile, Tile toTile, Tile previousAttackTile);
 
     public bool isPasive;
     // Upgrades

@@ -94,6 +94,7 @@ public class Helpers
             return Direction.COUNT;
         }
     }
+
 }
 
 public enum Direction

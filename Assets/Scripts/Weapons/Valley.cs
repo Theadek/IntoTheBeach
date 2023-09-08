@@ -12,10 +12,10 @@ public class Valley : BaseWeapon
     public Valley()
     {
         AttackDescription = "Shoot a valley missle that deals 1 DMG";
-        AttackHighlightPrefabN = GameAssets.i.fistPunchHighlightN;
-        AttackHighlightPrefabS = GameAssets.i.fistPunchHighlightS;
-        AttackHighlightPrefabE = GameAssets.i.fistPunchHighlightE;
-        AttackHighlightPrefabW = GameAssets.i.fistPunchHighlightW;
+        AttackHighlightPrefabN = GameAssets.i.pushN;
+        AttackHighlightPrefabS = GameAssets.i.pushS;
+        AttackHighlightPrefabE = GameAssets.i.pushE;
+        AttackHighlightPrefabW = GameAssets.i.pushW;
         DotPrefab = GameAssets.i.Dot;
 
         isPasive = false;
@@ -162,5 +162,20 @@ public class Valley : BaseWeapon
             default:
                 return null;
         }
+    }
+
+    public override int EnemyCalculateMovementScore(Tile tile)
+    {
+        return 0;
+    }
+
+    public override int EnemyCalculateAttackScore(Tile tile)
+    {
+        return 0;
+    }
+
+    public override Tile EnemyRecalculateAttackPlace(Tile fromTile, Tile toTile, Tile previousAttackTile)
+    {
+        return null;
     }
 }

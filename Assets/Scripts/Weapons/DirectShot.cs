@@ -124,4 +124,19 @@ public class DirectShot : BaseWeapon
     {
         return GetPossibleAttackPlaces(from).Contains(tile);
     }
+
+    public override int EnemyCalculateMovementScore(Tile tile)
+    {
+        return 0;
+    }
+
+    public override int EnemyCalculateAttackScore(Tile tile)
+    {
+        return 0;
+    }
+
+    public override Tile EnemyRecalculateAttackPlace(Tile fromTile, Tile toTile, Tile previousAttackTile)
+    {
+        return null;
+    }
 }

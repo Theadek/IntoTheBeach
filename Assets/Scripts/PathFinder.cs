@@ -108,6 +108,64 @@ public class PathFinder : MonoBehaviour
         OnPossibleMovesChanged?.Invoke(this, EventArgs.Empty);
     }
 
+    public List<PathNode> GetListOfPossibleMoves(TileObject tileObject)
+    {
+        HashSet<Vector2Int> visited = new HashSet<Vector2Int>();
+        List<PathNode> toSearch = new List<PathNode>();
+        possibleMoves = new List<PathNode>();
+
+
+        toSearch.Add(new PathNode(tileObject.GetTile().GetXY(), null));
+        visited.Add(toSearch[0].XY);
+        possibleMoves.Add(toSearch[0]);
+
+        if (!tileObject.CanMove())
+        {
+            return possibleMoves;
+        }
+
+        for (int distance = 0; distance < tileObject.GetMovement(); distance++)
+        {
+            List<PathNode> newToSearch = new List<PathNode>();
+            while (toSearch.Any())
+            {
+                var current = toSearch[0];
+                toSearch.Remove(current);
+                Tile currentTile = TileManager.Instance.GetTile(current.XY);
+
+                // TODO Check if Direction++ works
+                for (Direction direction = 0; direction < Direction.COUNT; direction++)
+                {
+                    Vector2Int possiblePlace = Helpers.GetMovedVector2Int(current.XY, direction);
+                    if (visited.Contains(possiblePlace)) continue;
+
+                    PathNode newPathNode = new PathNode(possiblePlace, current);
+
+                    if (TileManager.Instance.TryGetNeighborTile(currentTile, direction, out Tile neighbor))
+                    {
+                        if (neighbor.TryGetTileObject(out TileObject neighborObject))
+                        {
+                            if (tileObject.HasSameType(neighborObject) || tileObject.IsFlying())
+                            {
+                                newToSearch.Add(newPathNode);
+                            }
+                        }
+                        else
+                        {
+                            //Empty Tile
+                            newToSearch.Add(newPathNode);
+                            possibleMoves.Add(newPathNode);
+                        }
+                        visited.Add(newPathNode.XY);
+                    }
+                }
+
+            }
+            toSearch = newToSearch;
+        }
+        return possibleMoves;
+    }
+
     private void ClearPossibleMoves()
     {
         possibleMoves = null;

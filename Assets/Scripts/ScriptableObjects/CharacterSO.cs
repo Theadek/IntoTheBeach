@@ -11,7 +11,6 @@ public class CharacterSO : ScriptableObject
     public GameObject prefab;
     public BaseWeapon.Weapon[] availableAttacks;
 
-
     public bool movable;
     public bool pushable;
     public bool hasArmor;
