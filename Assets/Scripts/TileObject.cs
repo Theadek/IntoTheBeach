@@ -106,8 +106,9 @@ public class TileObject : MonoBehaviour
     }
     #endregion
 
-    #region GET isFlying
+    #region GET PROPERTIES
     public bool IsFlying() => isFlying;
+    public bool IsPushable() => pushable;
     #endregion
 
     #region CharacterSO

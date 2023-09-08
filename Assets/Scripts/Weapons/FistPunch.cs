@@ -125,9 +125,25 @@ public class FistPunch : BaseWeapon
             }
             var position = TileManager.Instance.GetGridPosition(tile.GetXY());
             GameManager.Instance.MyInstantiate(AttackHighlightPrefab, position, Quaternion.identity, parent);
+
             if (TileManager.Instance.TryGetNeighborTile(tile, direction, out _))
             {
-                GameManager.Instance.MyInstantiate(AttackHighlightPrefabDir, position, Quaternion.identity, parent);
+                GameObject go = GameManager.Instance.MyInstantiate(AttackHighlightPrefabDir, position, Quaternion.identity, parent);
+                if (tile.TryGetTileObject(out TileObject neighborTileObject))
+                {
+                    if (!neighborTileObject.IsPushable())
+                    {
+                        Color color = go.GetComponentInChildren<SpriteRenderer>().color;
+                        color.a = .2f;
+                        go.GetComponentInChildren<SpriteRenderer>().color = color;
+                    }
+                }
+                else
+                {
+                    Color color = go.GetComponentInChildren<SpriteRenderer>().color;
+                    color.a = .2f;
+                    go.GetComponentInChildren<SpriteRenderer>().color = color;
+                }
             }
         }
         else
@@ -158,6 +174,7 @@ public class FistPunch : BaseWeapon
                 }
             }
             if (target.IsPlayerType() || target.IsBuildingType()) score += 10;
+            if (target.IsTerrainType()) score += 1;
             // TODO if tile is attacked by other Enemy then -20???
         }
         return score;
