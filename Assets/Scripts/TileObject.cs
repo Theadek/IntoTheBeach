@@ -189,28 +189,28 @@ public class TileObject : MonoBehaviour
         if (explosive)
         {
             TileObject newTileObject;
+            int explosionDamage = 1;
             if (TileManager.Instance.TryGetNeighborTileObject(tile, Direction.North, out newTileObject))
             {
-                int explosionDamage = 1;
                 newTileObject.GetDamaged(explosionDamage);
             }
             if (TileManager.Instance.TryGetNeighborTileObject(tile, Direction.South, out newTileObject))
             {
-                int explosionDamage = 1;
                 newTileObject.GetDamaged(explosionDamage);
             }
             if (TileManager.Instance.TryGetNeighborTileObject(tile, Direction.West, out newTileObject))
             {
-                int explosionDamage = 1;
                 newTileObject.GetDamaged(explosionDamage);
             }
             if (TileManager.Instance.TryGetNeighborTileObject(tile, Direction.East, out newTileObject))
             {
-                int explosionDamage = 1;
                 newTileObject.GetDamaged(explosionDamage);
             }
         }
-        GameManager.Instance.UnregisterEnemy(this);
+        if (IsEnemyType())
+        {
+            GameManager.Instance.UnregisterEnemy(this);
+        }
         tile.RemoveTileObject();
         Destroy(gameObject);
     }
