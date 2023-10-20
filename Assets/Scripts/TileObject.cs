@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class TileObject : MonoBehaviour
@@ -351,6 +352,44 @@ public class TileObject : MonoBehaviour
     {
         return weapons;
     }
+    #endregion
+
+    #region animation move
+
+    public async Task MoveToPosition(PathFinder.PathNode newPosition)
+    {
+        List<PathFinder.PathNode> pathNodes = new List<PathFinder.PathNode>();
+        PathFinder.PathNode current = newPosition;
+        while(current != null)
+        {
+            pathNodes.Add(current);
+            current = current.previousNode;
+        }
+        for(int i = pathNodes.Count - 1; i >= 0; i--)
+        {
+            await SlideToPosition(TileManager.Instance.GetTile(pathNodes[i].XY));
+        }
+    }
+
+    private async Task SlideToPosition(Tile to)
+    {
+        const float slideSpeed = 5f;
+        Vector3 dirVec3 = to.transform.position - transform.position;
+        while(transform.position != to.transform.position)
+        {
+            Vector3 vec3Amount = dirVec3 * slideSpeed * Time.deltaTime;
+            if(vec3Amount.magnitude >= (to.transform.position - transform.position).magnitude)
+            {
+                transform.position = to.transform.position;
+            }
+            else
+            {
+                transform.position += vec3Amount;
+            }
+            await Task.Yield();
+        }
+    }
+
     #endregion
 
     // Static TileObject Creation

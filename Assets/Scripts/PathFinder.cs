@@ -112,16 +112,16 @@ public class PathFinder : MonoBehaviour
     {
         HashSet<Vector2Int> visited = new HashSet<Vector2Int>();
         List<PathNode> toSearch = new List<PathNode>();
-        possibleMoves = new List<PathNode>();
+        var newPossibleMoves = new List<PathNode>();
 
 
         toSearch.Add(new PathNode(tileObject.GetTile().GetXY(), null));
         visited.Add(toSearch[0].XY);
-        possibleMoves.Add(toSearch[0]);
+        newPossibleMoves.Add(toSearch[0]);
 
         if (!tileObject.CanMove())
         {
-            return possibleMoves;
+            return newPossibleMoves;
         }
 
         for (int distance = 0; distance < tileObject.GetMovement(); distance++)
@@ -154,7 +154,7 @@ public class PathFinder : MonoBehaviour
                         {
                             //Empty Tile
                             newToSearch.Add(newPathNode);
-                            possibleMoves.Add(newPathNode);
+                            newPossibleMoves.Add(newPathNode);
                         }
                         visited.Add(newPathNode.XY);
                     }
@@ -163,7 +163,7 @@ public class PathFinder : MonoBehaviour
             }
             toSearch = newToSearch;
         }
-        return possibleMoves;
+        return newPossibleMoves;
     }
 
     private void ClearPossibleMoves()

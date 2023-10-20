@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class TileManager : MonoBehaviour
@@ -197,11 +198,23 @@ public class TileManager : MonoBehaviour
     }
 
 
+    public async Task MoveTileObjectOnPath(TileObject from, PathFinder.PathNode to)
+    {
+        TileManager.Instance.GetTile(to.XY).TrySetTileObjectWithoutMoving(from);
+        await from.MoveToPosition(to);
+        GameManager.Instance.RecalculateEnemyAttacks();
+    }
+    public async Task MoveTileObjectOnPath(Tile from, PathFinder.PathNode to)
+    {
+        await MoveTileObjectOnPath(from.GetTileObject(), to);
+    }
+
     public void MoveTileObject(TileObject from, Tile to)
     {
         to.TrySetTileObject(from);
         GameManager.Instance.RecalculateEnemyAttacks();
     }
+
     public void MoveTileObject(Tile from, Tile to)
     {
         MoveTileObject(from.GetTileObject(), to);

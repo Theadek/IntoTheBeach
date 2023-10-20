@@ -85,6 +85,19 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         return true;
     }
 
+    public bool TrySetTileObjectWithoutMoving(TileObject tileObject)
+    {
+        if (objectOnThisTile != null)
+        {
+            return false;
+        }
+        tileObject.transform.parent = transform;
+        tileObject.GetTile().RemoveTileObject();
+        tileObject.SetTile(this);
+        objectOnThisTile = tileObject;
+        return true;
+    }
+
     #endregion
 
     #region XY

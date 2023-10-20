@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
 
     public static GameManager Instance { get; private set; }
     private GameState gamestate;
+    private int waitingForAnimationStage;
 
     private TileObject selectedObject;
     private SelectionType selectionType = SelectionType.NULL;
@@ -33,6 +34,8 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        waitingForAnimationStage = 0;
+
         GameInput.Instance.OnRevertLastMove += GameInput_OnRevertLastMove;
         GameInput.Instance.OnRepair += GameInput_OnRepair;
         GameInput.Instance.OnEndTurn += GameInput_OnEndTurn;
@@ -135,18 +138,20 @@ public class GameManager : MonoBehaviour
             case GameState.EnemyMove:
                 // TODO - Enemies should find places to move
                 // 1) Enemies Moves
-                foreach(TileObject enemy in Enemies)
+                if(waitingForAnimationStage == 0)
                 {
-                    TileManager.Instance.MoveTileObject(
-                        enemy.GetTile(),
-                        enemy.GetComponent<EnemyAI>().CalculateMovement());
+                    waitingForAnimationStage = 1;
+                    EnemyMoves();
                 }
-                // 2) Enemies Telegraph Attacks
-                foreach (TileObject enemy in Enemies)
+                else if (waitingForAnimationStage == 2)
                 {
-                    enemy.GetComponent<EnemyAI>().CalculateAttack();
+                    waitingForAnimationStage = 0;
+                    //foreach (TileObject enemy in Enemies)
+                    //{
+                    //    enemy.GetComponent<EnemyAI>().CalculateAttack();
+                    //}
+                    ChangeGameState(GameState.EnemyPrepareEmerge);
                 }
-                ChangeGameState(GameState.EnemyPrepareEmerge);
                 break;
             case GameState.EnemyPrepareEmerge:
                 // TODO - Enemies choose places to emerge next turn
@@ -163,11 +168,20 @@ public class GameManager : MonoBehaviour
                 break;
             case GameState.EnemyAttack:
                 // TODO - Enemies finish telegraphed attacks
-                foreach (TileObject enemy in Enemies)
+                //foreach (TileObject enemy in Enemies)
+                bool allEnemiesAttacked = false;
+                while (!allEnemiesAttacked)
                 {
-                    enemy.GetComponent<EnemyAI>().Attack();
-                    TileManager.Instance.CheckHealthToDestroyed();
-                    RecalculateEnemyAttacks();
+                    allEnemiesAttacked = true;
+                    for (int i = 0; i < Enemies.Count; i++)
+                    {
+                        if (Enemies[i].GetComponent<EnemyAI>().IsAbleToAttack())
+                        {
+                            Enemies[i].GetComponent<EnemyAI>().Attack();
+                            allEnemiesAttacked = false;
+                            break;
+                        }
+                    }
                 }
                 ChangeGameState(GameState.EnemyEmerge);
                 break;
@@ -183,6 +197,22 @@ public class GameManager : MonoBehaviour
                 break;
         }
     }
+
+    private async void EnemyMoves()
+    {
+        foreach (TileObject enemy in Enemies)
+        {
+            PathFinder.PathNode pathNode = enemy.GetComponent<EnemyAI>().CalculateMovement();
+            await TileManager.Instance.MoveTileObjectOnPath(
+                enemy.GetTile(),
+                pathNode);
+
+            enemy.GetComponent<EnemyAI>().CalculateAttack();
+
+        }
+        waitingForAnimationStage = 2;
+    }
+
 
     public void TileLeftClicked(Tile tile)
     {

@@ -21,7 +21,7 @@ public class EnemyAI : MonoBehaviour
         weapons = tileObject.GetWeapons();
     }
 
-    public Tile CalculateMovement()
+    public PathFinder.PathNode CalculateMovement()
     {
         List<PathFinder.PathNode> listOfPossibleMoves = PathFinder.Instance.GetListOfPossibleMoves(tileObject);
         List<TileScore> tileScores = new List<TileScore>();
@@ -37,19 +37,19 @@ public class EnemyAI : MonoBehaviour
                     bestScoreBetweenWeapons = score;
                 }
             }
-            tileScores.Add(new TileScore { tile = tile, score = bestScoreBetweenWeapons });
+            tileScores.Add(new TileScore { pathNode = pathNode, score = bestScoreBetweenWeapons });
         }
         tileScores.Sort();
 
         //Get first or second best
         if(tileScores.Count == 1)
         {
-            return tileScores[0].tile;
+            return tileScores[0].pathNode;
         }
         else
         {
             int index = UnityEngine.Random.Range(0, 2);
-            return tileScores[index].tile;
+            return tileScores[index].pathNode;
         }
     }
 
@@ -96,13 +96,26 @@ public class EnemyAI : MonoBehaviour
             tileToAttack = null;
             tileFromToAttack = null;
             OnEnemyAttackChanged?.Invoke(this, EventArgs.Empty);
+            TileManager.Instance.CheckHealthToDestroyed();
+        }
+    }
+
+    public bool IsAbleToAttack()
+    {
+        if (weaponToUse != null && tileToAttack != null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 
 
     private class TileScore : IComparable
     {
-        public Tile tile;
+        public PathFinder.PathNode pathNode;
         public int score;
 
         int IComparable.CompareTo(object obj)
