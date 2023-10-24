@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -168,22 +169,16 @@ public class GameManager : MonoBehaviour
                 break;
             case GameState.EnemyAttack:
                 // TODO - Enemies finish telegraphed attacks
-                //foreach (TileObject enemy in Enemies)
-                bool allEnemiesAttacked = false;
-                while (!allEnemiesAttacked)
+                if(waitingForAnimationStage == 0)
                 {
-                    allEnemiesAttacked = true;
-                    for (int i = 0; i < Enemies.Count; i++)
-                    {
-                        if (Enemies[i].GetComponent<EnemyAI>().IsAbleToAttack())
-                        {
-                            Enemies[i].GetComponent<EnemyAI>().Attack();
-                            allEnemiesAttacked = false;
-                            break;
-                        }
-                    }
+                    waitingForAnimationStage = 1;
+                    EnemyAttack();
                 }
-                ChangeGameState(GameState.EnemyEmerge);
+                else if(waitingForAnimationStage == 2)
+                {
+                    waitingForAnimationStage = 0;
+                    ChangeGameState(GameState.EnemyEmerge);
+                }
                 break;
             case GameState.EnemyEmerge:
                 // TODO - Enemies emerges from ground or get stopped
@@ -209,6 +204,32 @@ public class GameManager : MonoBehaviour
 
             enemy.GetComponent<EnemyAI>().CalculateAttack();
 
+        }
+        waitingForAnimationStage = 2;
+    }
+
+    private async void EnemyAttack()
+    {
+        bool allEnemiesAttacked = false;
+        while (!allEnemiesAttacked)
+        {
+            allEnemiesAttacked = true;
+            for (int i = 0; i < Enemies.Count; i++)
+            {
+                if (Enemies[i].GetComponent<EnemyAI>().IsAbleToAttack())
+                {
+                    if (Enemies[i].TryGetComponent<EnemyAI>(out EnemyAI enemyAI))
+                    {
+                        await enemyAI.Attack();
+                    }
+                    else
+                    {
+                        Debug.LogWarning("No EnemyAI Script in Enemy TileObject");
+                    }
+                    allEnemiesAttacked = false;
+                    break;
+                }
+            }
         }
         waitingForAnimationStage = 2;
     }

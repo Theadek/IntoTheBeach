@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class EnemyAI : MonoBehaviour
@@ -87,11 +88,11 @@ public class EnemyAI : MonoBehaviour
         OnEnemyAttackChanged?.Invoke(this, EventArgs.Empty);
     }
 
-    public void Attack()
+    public async Task Attack()
     {
         if(weaponToUse != null && tileToAttack != null)
         {
-            weaponToUse.AttackTile(tileObject.GetTile(), tileToAttack);
+            await weaponToUse.AttackTile(tileObject.GetTile(), tileToAttack);
             weaponToUse = null;
             tileToAttack = null;
             tileFromToAttack = null;

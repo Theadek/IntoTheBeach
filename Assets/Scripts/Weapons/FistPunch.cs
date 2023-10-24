@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 
@@ -26,7 +27,7 @@ public class FistPunch : BaseWeapon
         };
     }
 
-    public override void AttackTile(Tile from, Tile tile)
+    public override async Task AttackTile(Tile from, Tile tile)
     {
         if(!IsTileInRange(from, tile)) return;
 
@@ -43,7 +44,8 @@ public class FistPunch : BaseWeapon
                     damageAmount+=2;
 
                 obj.GetDamaged(damageAmount);
-                obj.GetPushed(direction);
+                await obj.GetPushed(direction);
+                TileManager.Instance.CheckHealthToDestroyed();
             }
         }
         else

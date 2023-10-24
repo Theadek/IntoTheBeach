@@ -167,7 +167,7 @@ public class TileObject : MonoBehaviour
         OnHealthChanged?.Invoke(this, EventArgs.Empty);
     }
 
-    public void GetPushed(Direction direction)
+    public async Task GetPushed(Direction direction)
     {
         if (!pushable) return;
 
@@ -180,7 +180,7 @@ public class TileObject : MonoBehaviour
             }
             else
             {
-                TileManager.Instance.MoveTileObjectByOne(tile, direction);
+                await TileManager.Instance.MoveTileObjectByOneOnPath(tile, direction);
             }
         }
     }
@@ -356,7 +356,7 @@ public class TileObject : MonoBehaviour
 
     #region animation move
 
-    public async Task MoveToPosition(PathFinder.PathNode newPosition)
+    public async Task MoveToPositionAnimated(PathFinder.PathNode newPosition)
     {
         List<PathFinder.PathNode> pathNodes = new List<PathFinder.PathNode>();
         PathFinder.PathNode current = newPosition;
@@ -367,11 +367,11 @@ public class TileObject : MonoBehaviour
         }
         for(int i = pathNodes.Count - 1; i >= 0; i--)
         {
-            await SlideToPosition(TileManager.Instance.GetTile(pathNodes[i].XY));
+            await SlideToPositionAnimated(TileManager.Instance.GetTile(pathNodes[i].XY));
         }
     }
 
-    private async Task SlideToPosition(Tile to)
+    public async Task SlideToPositionAnimated(Tile to)
     {
         const float slideSpeed = 5f;
         Vector3 dirVec3 = to.transform.position - transform.position;

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class Valley : BaseWeapon
@@ -26,7 +27,7 @@ public class Valley : BaseWeapon
         };
     }
 
-    public override void AttackTile(Tile from, Tile tile)
+    public override async Task AttackTile(Tile from, Tile tile)
     {
         if (!IsTileInRange(from, tile)) return;
 
@@ -51,9 +52,10 @@ public class Valley : BaseWeapon
             {
                 if(TileManager.Instance.TryGetNeighborTileObject(tile, dir, out TileObject neighbor))
                 {
-                    neighbor.GetPushed(dir);
+                    await neighbor.GetPushed(dir);
                 }
             }
+            TileManager.Instance.CheckHealthToDestroyed();
         }
         else
         {

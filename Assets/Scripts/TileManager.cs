@@ -201,7 +201,7 @@ public class TileManager : MonoBehaviour
     public async Task MoveTileObjectOnPath(TileObject from, PathFinder.PathNode to)
     {
         TileManager.Instance.GetTile(to.XY).TrySetTileObjectWithoutMoving(from);
-        await from.MoveToPosition(to);
+        await from.MoveToPositionAnimated(to);
         GameManager.Instance.RecalculateEnemyAttacks();
     }
     public async Task MoveTileObjectOnPath(Tile from, PathFinder.PathNode to)
@@ -218,6 +218,21 @@ public class TileManager : MonoBehaviour
     public void MoveTileObject(Tile from, Tile to)
     {
         MoveTileObject(from.GetTileObject(), to);
+    }
+
+    public async Task MoveTileObjectByOneOnPath(Tile from, Direction direction)
+    {
+        //TODO check if can push, then push
+        if (TryGetNeighborTile(from, direction, out Tile tile))
+        {
+            await from.GetTileObject().SlideToPositionAnimated(tile);
+            tile.TrySetTileObjectWithoutMoving(from.GetTileObject());
+            GameManager.Instance.RecalculateEnemyAttacks();
+        }
+    }
+    public async Task MoveTileObjectByOneOnPath(TileObject from, Direction direction)
+    {
+        await MoveTileObjectByOneOnPath(from.GetTile(), direction);
     }
 
     public void MoveTileObjectByOne(Tile from, Direction direction)

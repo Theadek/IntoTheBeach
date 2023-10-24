@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public abstract class BaseWeapon
@@ -8,7 +9,7 @@ public abstract class BaseWeapon
     public string AttackDescription;
     public abstract List<Tile> GetPossibleAttackPlaces(Tile from);
     public abstract bool IsTileInRange(Tile from, Tile tile);
-    public abstract void AttackTile(Tile from, Tile tile);
+    public abstract Task AttackTile(Tile from, Tile tile);
     public abstract void DisplayEffectOnTile(Tile from, Tile tile, Transform parent);
     public abstract int EnemyCalculateMovementScore(Tile tile);
     public abstract int EnemyCalculateAttackScore(Tile tile);

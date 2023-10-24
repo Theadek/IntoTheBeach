@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class DirectShot : BaseWeapon
@@ -18,7 +19,7 @@ public class DirectShot : BaseWeapon
         };
     }
 
-    public override void AttackTile(Tile from, Tile tile)
+    public override async Task AttackTile(Tile from, Tile tile)
     {
         if (!IsTileInRange(from, tile)) return;
 
@@ -34,6 +35,9 @@ public class DirectShot : BaseWeapon
                     damageAmount++;
 
                 tileObject.GetDamaged(damageAmount);
+
+                await Task.Yield();
+                TileManager.Instance.CheckHealthToDestroyed();
             }
             else
             {
