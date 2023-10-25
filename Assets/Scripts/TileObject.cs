@@ -175,6 +175,7 @@ public class TileObject : MonoBehaviour
         {
             if(newTile.TryGetTileObject(out TileObject newTileObject))
             {
+                await TileManager.Instance.MoveTileObjecyByOneAndBackOnPath(tile, direction);
                 newTileObject.GetDamagedFromPush();
                 this.GetDamagedFromPush();
             }

@@ -230,6 +230,17 @@ public class TileManager : MonoBehaviour
             GameManager.Instance.RecalculateEnemyAttacks();
         }
     }
+
+    public async Task MoveTileObjecyByOneAndBackOnPath(Tile from, Direction direction)
+    {
+        if (TryGetNeighborTile(from, direction, out Tile tile))
+        {
+            await from.GetTileObject().SlideToPositionAnimated(tile, 2f);
+            await from.GetTileObject().SlideToPositionAnimated(from, 5f);
+            GameManager.Instance.RecalculateEnemyAttacks();
+        }
+    }
+
     public async Task MoveTileObjectByOneOnPath(TileObject from, Direction direction)
     {
         await MoveTileObjectByOneOnPath(from.GetTile(), direction);
