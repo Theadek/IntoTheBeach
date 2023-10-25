@@ -225,7 +225,7 @@ public class TileManager : MonoBehaviour
         //TODO check if can push, then push
         if (TryGetNeighborTile(from, direction, out Tile tile))
         {
-            await from.GetTileObject().SlideToPositionAnimated(tile);
+            await from.GetTileObject().SlideToPositionAnimated(tile, 2f);
             tile.TrySetTileObjectWithoutMoving(from.GetTileObject());
             GameManager.Instance.RecalculateEnemyAttacks();
         }

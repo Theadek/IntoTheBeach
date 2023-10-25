@@ -204,6 +204,8 @@ public class GameManager : MonoBehaviour
 
             enemy.GetComponent<EnemyAI>().CalculateAttack();
 
+            await Task.Delay(500);
+
         }
         waitingForAnimationStage = 2;
     }
@@ -221,6 +223,7 @@ public class GameManager : MonoBehaviour
                     if (Enemies[i].TryGetComponent<EnemyAI>(out EnemyAI enemyAI))
                     {
                         await enemyAI.Attack();
+                        await Task.Delay(500);
                     }
                     else
                     {

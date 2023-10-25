@@ -98,6 +98,7 @@ public class EnemyAI : MonoBehaviour
             tileFromToAttack = null;
             OnEnemyAttackChanged?.Invoke(this, EventArgs.Empty);
             TileManager.Instance.CheckHealthToDestroyed();
+            await Task.Yield();
         }
     }
 

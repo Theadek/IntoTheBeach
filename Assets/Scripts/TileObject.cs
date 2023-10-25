@@ -371,9 +371,8 @@ public class TileObject : MonoBehaviour
         }
     }
 
-    public async Task SlideToPositionAnimated(Tile to)
+    public async Task SlideToPositionAnimated(Tile to, float slideSpeed = 5f)
     {
-        const float slideSpeed = 5f;
         Vector3 dirVec3 = to.transform.position - transform.position;
         while(transform.position != to.transform.position)
         {

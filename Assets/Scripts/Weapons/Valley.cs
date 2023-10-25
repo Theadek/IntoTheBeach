@@ -48,13 +48,15 @@ public class Valley : BaseWeapon
 
                 tileObject.GetDamaged(damageAmount);
             }
+            List<Task> tasks = new List<Task>();
             for(Direction dir = Direction.North; dir != Direction.COUNT; dir++)
             {
                 if(TileManager.Instance.TryGetNeighborTileObject(tile, dir, out TileObject neighbor))
                 {
-                    await neighbor.GetPushed(dir);
+                    tasks.Add(neighbor.GetPushed(dir));
                 }
             }
+            await Task.WhenAll(tasks);
             TileManager.Instance.CheckHealthToDestroyed();
         }
         else
