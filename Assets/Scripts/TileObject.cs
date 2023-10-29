@@ -357,7 +357,7 @@ public class TileObject : MonoBehaviour
 
     #region animation move
 
-    public async Task MoveToPositionAnimated(PathFinder.PathNode newPosition)
+    public async Task MoveToPositionAnimated(PathFinder.PathNode newPosition, float speed=5f)
     {
         List<PathFinder.PathNode> pathNodes = new List<PathFinder.PathNode>();
         PathFinder.PathNode current = newPosition;
@@ -368,7 +368,7 @@ public class TileObject : MonoBehaviour
         }
         for(int i = pathNodes.Count - 1; i >= 0; i--)
         {
-            await SlideToPositionAnimated(TileManager.Instance.GetTile(pathNodes[i].XY));
+            await SlideToPositionAnimated(TileManager.Instance.GetTile(pathNodes[i].XY), speed);
         }
     }
 

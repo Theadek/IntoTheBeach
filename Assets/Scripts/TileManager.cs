@@ -186,6 +186,17 @@ public class TileManager : MonoBehaviour
         from.ObjectJustMoved();
         from.SavePreviousPosition();
         MoveTileObject(from, to);
+        GameManager.Instance.RecalculateEnemyAttacks();
+    }
+
+    public async Task MovePlayerTileObjectOnPath(TileObject from, Tile to)
+    {
+        from.ObjectJustMoved();
+        from.SavePreviousPosition();
+
+        PathFinder.PathNode pathNode = PathFinder.Instance.GetPathNodeForXY(to.GetXY());
+        await MoveTileObjectOnPath(from, pathNode, 10f);
+        GameManager.Instance.RecalculateEnemyAttacks();
     }
 
     public void RevertMovePlayerTileObject(TileObject tileObject)
@@ -198,15 +209,15 @@ public class TileManager : MonoBehaviour
     }
 
 
-    public async Task MoveTileObjectOnPath(TileObject from, PathFinder.PathNode to)
+    public async Task MoveTileObjectOnPath(TileObject from, PathFinder.PathNode to, float speed=5f)
     {
         TileManager.Instance.GetTile(to.XY).TrySetTileObjectWithoutMoving(from);
-        await from.MoveToPositionAnimated(to);
+        await from.MoveToPositionAnimated(to, speed);
         GameManager.Instance.RecalculateEnemyAttacks();
     }
-    public async Task MoveTileObjectOnPath(Tile from, PathFinder.PathNode to)
+    public async Task MoveTileObjectOnPath(Tile from, PathFinder.PathNode to, float speed=5f)
     {
-        await MoveTileObjectOnPath(from.GetTileObject(), to);
+        await MoveTileObjectOnPath(from.GetTileObject(), to, speed);
     }
 
     public void MoveTileObject(TileObject from, Tile to)

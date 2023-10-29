@@ -47,6 +47,8 @@ public class GameManager : MonoBehaviour
     #region OnEvents
     private void GameInput_OnSecondWeaponUse(object sender, EventArgs e)
     {
+        if (waitingForAnimationStage == 1)
+            return;
         if (!IsPlayerTurn())
             return;
         if (!HasSelectedObject())
@@ -72,6 +74,8 @@ public class GameManager : MonoBehaviour
 
     private void GameInput_OnFirstWeaponUse(object sender, EventArgs e)
     {
+        if (waitingForAnimationStage == 1)
+            return;
         if (!IsPlayerTurn())
             return;
         if (!HasSelectedObject())
@@ -97,6 +101,8 @@ public class GameManager : MonoBehaviour
 
     private void GameInput_OnRepair(object sender, EventArgs e)
     {
+        if (waitingForAnimationStage == 1)
+            return;
         if (!IsPlayerTurn() || !HasSelectedObject())
             return;
         if (selectedObject.GetHasDoneAction())
@@ -109,6 +115,8 @@ public class GameManager : MonoBehaviour
 
     private void GameInput_OnEndTurn(object sender, EventArgs e)
     {
+        if (waitingForAnimationStage == 1)
+            return;
         if (!IsPlayerTurn())
             return;
         SetSelectedObject(null);
@@ -117,6 +125,8 @@ public class GameManager : MonoBehaviour
 
     private void GameInput_OnRevertLastMove(object sender, EventArgs e)
     {
+        if (waitingForAnimationStage == 1)
+            return;
         if (!IsPlayerTurn())
             return;
         if(TryGetLastPlayerMovementTileObject(out TileObject tileObject))
@@ -147,16 +157,21 @@ public class GameManager : MonoBehaviour
                 else if (waitingForAnimationStage == 2)
                 {
                     waitingForAnimationStage = 0;
-                    //foreach (TileObject enemy in Enemies)
-                    //{
-                    //    enemy.GetComponent<EnemyAI>().CalculateAttack();
-                    //}
                     ChangeGameState(GameState.EnemyPrepareEmerge);
                 }
                 break;
             case GameState.EnemyPrepareEmerge:
                 // TODO - Enemies choose places to emerge next turn
-                ChangeGameState(GameState.PlayerTurn);
+                if (waitingForAnimationStage == 0)
+                {
+                    waitingForAnimationStage = 1;
+                    EnemyPrepareEmerge();
+                }
+                else if (waitingForAnimationStage == 2)
+                {
+                    waitingForAnimationStage = 0;
+                    ChangeGameState(GameState.PlayerTurn);
+                }
                 break;
             case GameState.PlayerTurn:
                 // TODO - one time revert whole turn
@@ -237,9 +252,24 @@ public class GameManager : MonoBehaviour
         waitingForAnimationStage = 2;
     }
 
+    private async void EnemyPrepareEmerge()
+    {
+        //Calculate how many enemies + already waiting for emerge
+
+        //Choose places to emerge
+
+        //Show Places to emerge (Invoke an event)
+
+        await Task.Yield();
+
+        waitingForAnimationStage = 2;
+    }
+
 
     public void TileLeftClicked(Tile tile)
     {
+        if (waitingForAnimationStage == 1) return;
+
         if (IsPlayerTurn())
         {
             if (selectionType == SelectionType.NULL ||
@@ -272,9 +302,8 @@ public class GameManager : MonoBehaviour
                         if (PathFinder.Instance.ListConstainsXY(tile.GetXY()) &&
                             selectedObject.CanMove())
                         {
-                            TileManager.Instance.MovePlayerTileObject(selectedObject, tile);
-                            SaveLastPlayerMovement();
-                            SetSelectedObject(selectedObject);
+                            waitingForAnimationStage = 1;
+                            MovePlayerAsync(selectedObject, tile);
                         }
                         else
                         {
@@ -292,7 +321,6 @@ public class GameManager : MonoBehaviour
                 if (selectedObject.IsTileInRangeFirstWeapon(tile))
                 {
                     selectedObject.AttackTileFirstWeapon(tile);
-                    TileManager.Instance.CheckHealthToDestroyed();
                     SetSelectedObject(null);
                     ClearLastPlayerMovement();
                 }
@@ -306,7 +334,6 @@ public class GameManager : MonoBehaviour
                 if (selectedObject.IsTileInRangeSecondWeapon(tile))
                 {
                     selectedObject.AttackTileSecondWeapon(tile);
-                    TileManager.Instance.CheckHealthToDestroyed();
                     SetSelectedObject(null);
                     ClearLastPlayerMovement();
                 }
@@ -318,10 +345,20 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private async void MovePlayerAsync(TileObject tileObject, Tile to)
+    {
+        await TileManager.Instance.MovePlayerTileObjectOnPath(tileObject, to);
+        SaveLastPlayerMovement();
+        SetSelectedObject(tileObject);
+        waitingForAnimationStage = 0;
+    }
+
 
     // DEBUG FOR NOW
     public void TileRightClicked(Tile tile)
     {
+        if (waitingForAnimationStage == 1) return;
+
         if (IsPlayerTurn())
         {
             if (tile.TryGetTileObject(out TileObject tileObject))
@@ -399,6 +436,7 @@ public class GameManager : MonoBehaviour
         ChangeGameState(GameState.Hazards);
     }
 
+    //Not used
     private void ChangeGameState(GameState state)
     {
         gamestate = state;
