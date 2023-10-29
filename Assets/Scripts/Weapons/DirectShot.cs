@@ -131,16 +131,47 @@ public class DirectShot : BaseWeapon
 
     public override int EnemyCalculateMovementScore(Tile tile)
     {
-        return 0;
+        int score = 0;
+        for (Direction direction = Direction.North; direction < Direction.COUNT; direction++)
+        {
+            TileObject target;
+            if (!TileManager.Instance.TryGetFirstTileObjectInDirection(tile, direction, out target))
+            {
+                continue;
+            }
+
+            if (target.IsPlayerType() || target.IsBuildingType()) score += 10;
+            if (target.IsTerrainType()) score += 1;
+            // TODO if tile is attacked by other Enemy then -20???
+        }
+        return score;
     }
 
     public override int EnemyCalculateAttackScore(Tile tile)
     {
-        return 0;
+        if (tile.TryGetTileObject(out TileObject target))
+        {
+            if (target.IsEnemyType()) return -9999;
+            if (target.IsPlayerType() || target.IsBuildingType()) return 10;
+            if (target.IsTerrainType()) return 1;
+        }
+        return -9999;
     }
 
     public override Tile EnemyRecalculateAttackPlace(Tile fromTile, Tile toTile, Tile previousAttackTile)
     {
-        return null;
+        //Get AttackDirection
+        Helpers.TryGetDirectionLong(fromTile.GetXY(), previousAttackTile.GetXY(), out Direction direction, out _);
+
+        //Dash to Enemy
+        if (TileManager.Instance.TryGetFirstTileObjectInDirection(toTile, direction, out TileObject target))
+        {
+            return target.GetTile();
+        }
+        else
+        {
+            return TileManager.Instance.GetLastTileInDirection(toTile, direction);
+        }
+
     }
 }

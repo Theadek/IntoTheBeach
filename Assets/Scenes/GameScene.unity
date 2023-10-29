@@ -585,7 +585,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TilePrefab: {fileID: 3499789245733913992, guid: 4abacd81a209458498ce2a085904c5c5, type: 3}
   playerFighterPrefab: {fileID: 3466743120071343090, guid: 629b0db20ed77cc4cbc32526d77d6ae9, type: 3}
-  enemyFighterPrefab: {fileID: 6232053041926739193, guid: f4b92f88be39d704fb02b5f9dc4d1b63, type: 3}
+  enemyFighterPrefab: {fileID: 6232053041926739193, guid: 5b4b12c90c45a3e4ba571513f9f4b038, type: 3}
   treePrefab: {fileID: 801348193567374497, guid: ff264c68ee9b91349b3ff1f1eddf9d1e, type: 3}
 --- !u!156049354 &1885680165
 Grid:

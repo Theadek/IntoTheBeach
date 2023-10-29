@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public class Valley : BaseWeapon
 {
@@ -170,16 +171,49 @@ public class Valley : BaseWeapon
 
     public override int EnemyCalculateMovementScore(Tile tile)
     {
-        return 0;
+        List<Tile> possibleAttackPlaces = GetPossibleAttackPlaces(tile);
+        int score = 0;
+        foreach (Tile possibleAttackPlace in possibleAttackPlaces)
+        {
+            if(!possibleAttackPlace.TryGetTileObject(out TileObject target))
+            {
+                continue;
+            }
+
+            if (target.IsPlayerType() || target.IsBuildingType()) score += 10;
+            if (target.IsTerrainType()) score += 1;
+        }
+        return score;
     }
 
     public override int EnemyCalculateAttackScore(Tile tile)
     {
-        return 0;
+        if (tile.TryGetTileObject(out TileObject target))
+        {
+            if (target.IsEnemyType()) return -9999;
+            if (target.IsPlayerType() || target.IsBuildingType()) return 10;
+            if (target.IsTerrainType()) return 1;
+        }
+        return -9999;
     }
 
     public override Tile EnemyRecalculateAttackPlace(Tile fromTile, Tile toTile, Tile previousAttackTile)
     {
-        return null;
+        //Get AttackDirection
+        Helpers.TryGetDirectionLong(fromTile.GetXY(), previousAttackTile.GetXY(), out Direction direction, out int distance);
+
+        Tile newAttackedTile = toTile;
+        for(int i = 0; i < distance; i++)
+        {
+            if(TileManager.Instance.TryGetNeighborTile(newAttackedTile, direction, out Tile neighbor))
+            {
+                newAttackedTile = neighbor;
+            }
+            else
+            {
+                return null;
+            }
+        }
+        return newAttackedTile;
     }
 }
