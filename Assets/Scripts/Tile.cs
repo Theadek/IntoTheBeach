@@ -155,10 +155,10 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         {
             GameManager.Instance.TileLeftClicked(this);
         }
-        if(eventData.button == PointerEventData.InputButton.Right)
-        {
-            GameManager.Instance.TileRightClicked(this);
-        }
+        //if(eventData.button == PointerEventData.InputButton.Right)
+        //{
+        //    GameManager.Instance.TileRightClicked(this);
+        //}
     }
 
     public void OnPointerExit(PointerEventData eventData)

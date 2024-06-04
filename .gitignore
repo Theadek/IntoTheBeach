@@ -71,3 +71,24 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+
+# Unity Tools
+*UMotion*
+/[Aa]ssets/Editor Default Resources*
+/[Aa]ssets/Gizmos*
+/[Aa]ssets/Plugins*
+
+# Polygon Assets
+/[Aa]ssets/[Pp][Oo][Ll][Yy][Gg][Oo][Nn]*
+
+# Unity Technologies
+/[Aa]ssets/UnityTechnologies*
+
+# vTools
+/[Aa]ssets/v*
+
+# uPixelator
+/[Aa]ssets/Abiogenesis3d*
+
+# WitchHag
+/[Aa]ssets/Witch_Hag_Animations*

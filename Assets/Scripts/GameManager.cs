@@ -42,6 +42,17 @@ public class GameManager : MonoBehaviour
         GameInput.Instance.OnEndTurn += GameInput_OnEndTurn;
         GameInput.Instance.OnFirstWeaponUse += GameInput_OnFirstWeaponUse;
         GameInput.Instance.OnSecondWeaponUse += GameInput_OnSecondWeaponUse;
+        GameInput.Instance.OnCancel += Instance_OnCancel;
+    }
+
+    private void Instance_OnCancel(object sender, EventArgs e)
+    {
+        if (waitingForAnimationStage == 1) return;
+
+        if (IsPlayerTurn())
+        {
+            SetSelectedObject(null);
+        }
     }
 
     #region OnEvents
@@ -353,20 +364,6 @@ public class GameManager : MonoBehaviour
         waitingForAnimationStage = 0;
     }
 
-
-    // DEBUG FOR NOW
-    public void TileRightClicked(Tile tile)
-    {
-        if (waitingForAnimationStage == 1) return;
-
-        if (IsPlayerTurn())
-        {
-            if (tile.TryGetTileObject(out TileObject tileObject))
-            {
-                tileObject.GetDamaged(1);
-            }
-        }
-    }
 
     public void SetSelectedObject(TileObject selectedObject)
     {

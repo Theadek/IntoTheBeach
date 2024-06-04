@@ -99,6 +99,15 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Cancel"",
+                    ""type"": ""Button"",
+                    ""id"": ""465f8bb8-255d-4c9d-ae51-806ce33e2efa"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -106,6 +115,17 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""name"": """",
                     ""id"": ""4b9035ef-9b6f-47fa-bc11-edd150c9a162"",
                     ""path"": ""<Mouse>/backButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""RevertLastMove"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""46e74ba2-e151-4d3b-a175-3ebc451691d1"",
+                    ""path"": ""<Keyboard>/backspace"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -156,6 +176,17 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""action"": ""Repair"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9a28daf1-2b5c-40d7-ad8b-6daa48ed6a9a"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Cancel"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -172,6 +203,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         m_Player_FirstWeapon = m_Player.FindAction("FirstWeapon", throwIfNotFound: true);
         m_Player_SecondWeapon = m_Player.FindAction("SecondWeapon", throwIfNotFound: true);
         m_Player_Repair = m_Player.FindAction("Repair", throwIfNotFound: true);
+        m_Player_Cancel = m_Player.FindAction("Cancel", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -284,6 +316,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_FirstWeapon;
     private readonly InputAction m_Player_SecondWeapon;
     private readonly InputAction m_Player_Repair;
+    private readonly InputAction m_Player_Cancel;
     public struct PlayerActions
     {
         private @Controls m_Wrapper;
@@ -293,6 +326,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         public InputAction @FirstWeapon => m_Wrapper.m_Player_FirstWeapon;
         public InputAction @SecondWeapon => m_Wrapper.m_Player_SecondWeapon;
         public InputAction @Repair => m_Wrapper.m_Player_Repair;
+        public InputAction @Cancel => m_Wrapper.m_Player_Cancel;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -317,6 +351,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @Repair.started += instance.OnRepair;
             @Repair.performed += instance.OnRepair;
             @Repair.canceled += instance.OnRepair;
+            @Cancel.started += instance.OnCancel;
+            @Cancel.performed += instance.OnCancel;
+            @Cancel.canceled += instance.OnCancel;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -336,6 +373,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @Repair.started -= instance.OnRepair;
             @Repair.performed -= instance.OnRepair;
             @Repair.canceled -= instance.OnRepair;
+            @Cancel.started -= instance.OnCancel;
+            @Cancel.performed -= instance.OnCancel;
+            @Cancel.canceled -= instance.OnCancel;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -364,5 +404,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         void OnFirstWeapon(InputAction.CallbackContext context);
         void OnSecondWeapon(InputAction.CallbackContext context);
         void OnRepair(InputAction.CallbackContext context);
+        void OnCancel(InputAction.CallbackContext context);
     }
 }

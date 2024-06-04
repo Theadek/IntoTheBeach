@@ -13,6 +13,7 @@ public class GameInput : MonoBehaviour
     public event EventHandler OnFirstWeaponUse;
     public event EventHandler OnSecondWeaponUse;
     public event EventHandler OnRepair;
+    public event EventHandler OnCancel;
 
     private Controls controls;
 
@@ -35,6 +36,12 @@ public class GameInput : MonoBehaviour
         controls.Player.FirstWeapon.performed += FirstWeapon_performed;
         controls.Player.SecondWeapon.performed += SecondWeapon_performed;
         controls.Player.Repair.performed += Repair_performed;
+        controls.Player.Cancel.performed += Cancel_performed;
+    }
+
+    private void Cancel_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        OnCancel?.Invoke(this, EventArgs.Empty);
     }
 
     private void Repair_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -75,6 +82,7 @@ public class GameInput : MonoBehaviour
         controls.Player.FirstWeapon.performed -= FirstWeapon_performed;
         controls.Player.SecondWeapon.performed -= SecondWeapon_performed;
         controls.Player.Repair.performed -= Repair_performed;
+        controls.Player.Cancel.performed -= Cancel_performed;
         controls.Dispose();
     }
 }
